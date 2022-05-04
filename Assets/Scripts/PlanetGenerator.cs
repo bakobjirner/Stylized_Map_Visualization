@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlanetGenerator : MonoBehaviour
 {
-    [Range(1,8)]
+    [Range(1,7)]
     public int details = 5;
 
 
