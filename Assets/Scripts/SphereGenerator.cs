@@ -235,6 +235,7 @@ public class SphereGenerator
                     tempA = verticeIndex;
                 }
                 a = tempA;
+                Debug.Log(i);
             }
             if (B.x < 0.25f)
             {
@@ -249,6 +250,7 @@ public class SphereGenerator
                     tempB = verticeIndex;
                 }
                 b = tempB;
+                Debug.Log(i);
             }
             if (C.x < 0.25f)
             {
@@ -263,6 +265,7 @@ public class SphereGenerator
                     tempC = verticeIndex;
                 }
                 c = tempC;
+                Debug.Log(i);
             }
             data.faces[i].v1 = a;
             data.faces[i].v2 = b;
