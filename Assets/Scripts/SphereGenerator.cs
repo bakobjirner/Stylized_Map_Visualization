@@ -4,25 +4,24 @@ using UnityEngine;
 
 public class SphereGenerator
 {
-    private static Dictionary<long, int> middlePointIndexCache;
-    private static List<Vector3> vertList;
-    private static SphereMeshData[] spheres = new SphereMeshData[7];
+
 
 
     public static SphereMeshData GetSphere(int subdivisions)
     {
-        if (spheres[subdivisions] == null)
-        {
-            spheres[subdivisions] = CreateIco(subdivisions);
-        }
-        return spheres[subdivisions];
+        return CreateIco(subdivisions);
+
     }
 
 
 
     private static SphereMeshData CreateIco(int subdivisions)
     {
-        middlePointIndexCache = new Dictionary<long, int>();
+
+        SphereMeshData data = new SphereMeshData();
+        List<Vector3> vertList;
+
+        data.middlePointIndexCache = new Dictionary<long, int>();
         vertList = new List<Vector3>();
 
         // create 12 vertices of a icosahedron
@@ -43,6 +42,8 @@ public class SphereGenerator
         vertList.Add(new Vector3(-t, 0f, -1f).normalized);
         vertList.Add(new Vector3(-t, 0f, 1f).normalized);
 
+        data.vertices = vertList;
+
         // create 20 triangles of the icosahedron
         List<Triangle> faces = new List<Triangle>();
 
@@ -53,7 +54,7 @@ public class SphereGenerator
         faces.Add(new Triangle(0, 7, 10));
         faces.Add(new Triangle(0, 10, 11));
 
-        // 5 adjacent faces 
+        // 5 adjacent faces
         faces.Add(new Triangle(1, 5, 9));
         faces.Add(new Triangle(5, 11, 4));
         faces.Add(new Triangle(11, 10, 2));
@@ -67,57 +68,53 @@ public class SphereGenerator
         faces.Add(new Triangle(3, 6, 8));
         faces.Add(new Triangle(3, 8, 9));
 
-        // 5 adjacent faces 
+        // 5 adjacent faces
         faces.Add(new Triangle(4, 9, 5));
         faces.Add(new Triangle(2, 4, 11));
         faces.Add(new Triangle(6, 2, 10));
         faces.Add(new Triangle(8, 6, 7));
         faces.Add(new Triangle(9, 8, 1));
 
+        data.faces = faces;
+
         //subdivide to desired level
-        faces = SubdivideFaces(faces, subdivisions);
+        SubdivideFaces(data, subdivisions);
 
-        //vertice-list to array
-        Vector3[] verticeArray = vertList.ToArray();
-        
+        List<Vector2> uvs = new List<Vector2>();
 
-        //create the list of triangles (always 3 consecutive points in list are one triangle)
-        List<int> triList = new List<int>();
-        for (int i = 0; i < faces.Count; i++)
+        for (int i = 0; i < data.vertices.Count; i++)
         {
-            triList.Add(faces[i].v1);
-            triList.Add(faces[i].v2);
-            triList.Add(faces[i].v3);
+            float u;
+            float v;
+            float lat = Mathf.Asin(data.vertices[i].y);
+            float lng = Mathf.Atan2(data.vertices[i].x, -data.vertices[i].z);
+            v = lat / (Mathf.PI) + 0.5f;
+            u = lng / (2 * Mathf.PI) + 0.5f;
+            uvs.Add(new Vector2(u, v));
         }
-        int[] triangleArray = triList.ToArray();
 
-        //generate uvs
-        Vector2[] uvs = new Vector2[vertList.Count];
+        data.uvs = uvs;
+
+        int[] wrapped = DetectWrappedUVCoordinates(data);
+        Debug.Log(wrapped.Length);
+        FixWrappedUV(wrapped, data);
 
         //set normals, simply use position of the point so all normals point outward
-        Vector3[] normales = new Vector3[vertList.Count];
-        for (int i = 0; i < normales.Length; i++)
+        data.normals = new List<Vector3>();
+        for (int i = 0; i < data.vertices.Count; i++)
         {
-            normales[i] = vertList[i].normalized;
-
-            uvs[i] = PointToCoordinate(verticeArray[i]);
+            data.normals.Add(vertList[i].normalized);
         }
 
-        return new SphereMeshData(verticeArray, triangleArray, normales,uvs);
+
+        return data;
     }
 
-    private static Vector2 PointToCoordinate(Vector3 pointOnSphere)
-    {
-        float latitude = Mathf.Asin(pointOnSphere.y*.5f+0.5f);
-        float longitude = Mathf.Atan2(pointOnSphere.x * .5f + 0.5f, -pointOnSphere.z * .5f + 0.5f);
-        return new Vector2(longitude, latitude);
-    } 
 
-
-    private static List<Triangle> SubdivideFaces(List<Triangle> faces, int numberOfSubdivisions)
+    private static void SubdivideFaces(SphereMeshData data, int numberOfSubdivisions)
     {
 
-        //in case somebody enters a value that is to high. do not remove if you aren't absolutely sure what youre doing. Will 
+        //in case somebody enters a value that is to high. do not remove if you aren't absolutely sure what youre doing. Will
         if (numberOfSubdivisions > 8)
         {
             numberOfSubdivisions = 2;
@@ -127,27 +124,26 @@ public class SphereGenerator
         for (int i = 0; i < numberOfSubdivisions; i++)
         {
             List<Triangle> facesDivided = new List<Triangle>();
-            foreach (var tri in faces)
+            foreach (var tri in data.faces)
             {
                 // replace triangle by 4 triangles
-                int a = MiddlePoint(tri.v1, tri.v2);
-                int b = MiddlePoint(tri.v2, tri.v3);
-                int c = MiddlePoint(tri.v3, tri.v1);
+                int a = MiddlePoint(tri.v1, tri.v2, data);
+                int b = MiddlePoint(tri.v2, tri.v3, data);
+                int c = MiddlePoint(tri.v3, tri.v1, data);
 
                 facesDivided.Add(new Triangle(tri.v1, a, c));
                 facesDivided.Add(new Triangle(tri.v2, b, a));
                 facesDivided.Add(new Triangle(tri.v3, c, b));
                 facesDivided.Add(new Triangle(a, b, c));
             }
-            faces = facesDivided;
+            data.faces = facesDivided;
         }
-        return faces;
     }
 
 
 
     // return index of vertice in the middle of p1 and p2, creates new vertice if it doesn't exist yet
-    private static int MiddlePoint(int p1, int p2)
+    private static int MiddlePoint(int p1, int p2, SphereMeshData data)
     {
         // get key of searched point in dictionary by combining the indexes of the two points
         bool firstIsSmaller = p1 < p2;
@@ -158,15 +154,15 @@ public class SphereGenerator
 
         //check if point exists
         int indexMiddle;
-        if (middlePointIndexCache.TryGetValue(key, out indexMiddle))
+        if (data.middlePointIndexCache.TryGetValue(key, out indexMiddle))
         {
             //if the point already exists, return its index
             return indexMiddle;
         }
 
         // if it doesn't exist, calculate it
-        Vector3 point1 = vertList[p1];
-        Vector3 point2 = vertList[p2];
+        Vector3 point1 = data.vertices[p1];
+        Vector3 point2 = data.vertices[p2];
         Vector3 middle = new Vector3
         (
             (point1.x + point2.x) / 2f,
@@ -178,13 +174,100 @@ public class SphereGenerator
         middle = middle.normalized;
 
         // add vertex to list
-        int i = vertList.Count;
-        vertList.Add(middle);
+        int i = data.vertices.Count;
+        data.vertices.Add(middle);
 
         // store it to dictonary, return index
-        middlePointIndexCache.Add(key, i);
+        data.middlePointIndexCache.Add(key, i);
 
         return i;
+    }
+
+    /**
+     * detect which triangles sit on the seem. find them by looking for inverted normals
+     * */
+    private static int[] DetectWrappedUVCoordinates(SphereMeshData data)
+    {
+        List<int> indices = new List<int>();
+        for (int i = 0; i < data.faces.Count; ++i)
+        {
+            int a = data.faces[i].v1;
+            int b = data.faces[i].v2;
+            int c = data.faces[i].v3;
+            Vector3 texA = new Vector3(data.uvs[a].x, data.uvs[a].y, 0);
+            Vector3 texB = new Vector3(data.uvs[b].x, data.uvs[b].y, 0);
+            Vector3 texC = new Vector3(data.uvs[c].x, data.uvs[c].y, 0);
+            Vector3 texNormal = Vector3.Cross(texB - texA, texC - texA);
+            if (texNormal.z > 0)
+            {
+                indices.Add(i);
+            }
+
+        }
+        return indices.ToArray();
+    }
+
+    /**
+     * duplicate vertices that cause seem disfraction
+     * */
+    private static void FixWrappedUV(int[] wrapped, SphereMeshData data)
+    {
+        int verticeIndex = data.vertices.Count - 1;
+        Dictionary<int, int> visited = new Dictionary<int, int>();
+        foreach (int i in wrapped)
+        {
+            int a = data.faces[i].v1;
+            int b = data.faces[i].v2;
+            int c = data.faces[i].v3;
+            Vector2 A = data.uvs[a];
+            Vector2 B = data.uvs[b];
+            Vector2 C = data.uvs[c];
+            if (A.x < 0.25f)
+            {
+                int tempA = a;
+                if (!visited.TryGetValue(a, out tempA))
+                {
+                    A.x += 1;
+                    data.uvs.Add(A);
+                    data.vertices.Add(data.vertices[a]);
+                    verticeIndex++;
+                    visited[a] = verticeIndex;
+                    tempA = verticeIndex;
+                }
+                a = tempA;
+            }
+            if (B.x < 0.25f)
+            {
+                int tempB = b;
+                if (!visited.TryGetValue(b, out tempB))
+                {
+                    B.x += 1;
+                    data.uvs.Add(B);
+                    data.vertices.Add(data.vertices[b]);
+                    verticeIndex++;
+                    visited[b] = verticeIndex;
+                    tempB = verticeIndex;
+                }
+                b = tempB;
+            }
+            if (C.x < 0.25f)
+            {
+                int tempC = c;
+                if (!visited.TryGetValue(c, out tempC))
+                {
+                    C.x += 1;
+                    data.uvs.Add(C);
+                    data.vertices.Add(data.vertices[c]);
+                    verticeIndex++;
+                    visited[c] = verticeIndex;
+                    tempC = verticeIndex;
+                }
+                c = tempC;
+            }
+            data.faces[i].v1 = a;
+            data.faces[i].v2 = b;
+            data.faces[i].v3 = c;
+        }
     }
 
 }

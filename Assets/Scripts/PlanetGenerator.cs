@@ -35,13 +35,11 @@ public class PlanetGenerator : MonoBehaviour
         mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
 
         SphereMeshData data = SphereGenerator.GetSphere(details);
-
-        Vector3[] vertices = data.vertices;
         //list to array
-        mesh.vertices = vertices;
-        mesh.triangles = data.faces;
-        mesh.normals = data.normals;
-        mesh.uv = data.uvs;
+        mesh.vertices = data.getVerticeArray();
+        mesh.triangles = data.getTriangleArray();
+        mesh.normals = data.getNormalArray();
+        mesh.uv = data.getUVArray();
         
 
         //recalculate mesh
