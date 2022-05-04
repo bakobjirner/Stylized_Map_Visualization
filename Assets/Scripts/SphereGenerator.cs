@@ -1,16 +1,47 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Xml.Serialization;
 using UnityEngine;
 
 public class SphereGenerator
 {
 
-
+    public static Dictionary<long, int> middlePointIndexCache;
 
     public static SphereMeshData GetSphere(int subdivisions)
     {
-        return CreateIco(subdivisions);
+        return ReadFile(subdivisions);
+    }
 
+    public static void WriteFile(SphereMeshData data,int subdivisions)
+    {
+        XmlSerializer xmls = new XmlSerializer(typeof(SphereMeshData));
+
+        using (var stream = File.OpenWrite("mesh"+subdivisions+".xml"))
+        {
+            xmls.Serialize(stream, data);
+        }
+    }
+
+    public static SphereMeshData ReadFile(int subdivisions)
+    {
+
+        SphereMeshData data;
+        XmlSerializer xmls = new XmlSerializer(typeof(SphereMeshData));
+        try
+        {
+            using (var stream = File.OpenRead("mesh" + subdivisions + ".xml"))
+            {
+                data = xmls.Deserialize(stream) as SphereMeshData;
+            }
+        }
+        catch (FileNotFoundException e)
+        {
+            data = CreateIco(subdivisions);
+            WriteFile(data,subdivisions);
+        }
+        return data;
     }
 
 
@@ -21,7 +52,7 @@ public class SphereGenerator
         SphereMeshData data = new SphereMeshData();
         List<Vector3> vertList;
 
-        data.middlePointIndexCache = new Dictionary<long, int>();
+        middlePointIndexCache = new Dictionary<long, int>();
         vertList = new List<Vector3>();
 
         // create 12 vertices of a icosahedron
@@ -114,7 +145,7 @@ public class SphereGenerator
     private static void SubdivideFaces(SphereMeshData data, int numberOfSubdivisions)
     {
 
-        //in case somebody enters a value that is to high. do not remove if you aren't absolutely sure what youre doing. Will
+        //in case somebody enters a value that is to high. do not remove if you aren't absolutely sure what youre doing. Will slow down computer
         if (numberOfSubdivisions > 8)
         {
             numberOfSubdivisions = 2;
@@ -154,7 +185,7 @@ public class SphereGenerator
 
         //check if point exists
         int indexMiddle;
-        if (data.middlePointIndexCache.TryGetValue(key, out indexMiddle))
+        if (middlePointIndexCache.TryGetValue(key, out indexMiddle))
         {
             //if the point already exists, return its index
             return indexMiddle;
@@ -178,7 +209,7 @@ public class SphereGenerator
         data.vertices.Add(middle);
 
         // store it to dictonary, return index
-        data.middlePointIndexCache.Add(key, i);
+        middlePointIndexCache.Add(key, i);
 
         return i;
     }

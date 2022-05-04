@@ -1,14 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Xml.Serialization;
 using UnityEngine;
 
+[XmlRoot]
 public class SphereMeshData
 {
+    [XmlElement]
     public List<Vector3> vertices;
+    [XmlElement]
     public List<Triangle> faces;
+    [XmlElement]
     public List<Vector3> normals;
+    [XmlElement]
     public List<Vector2> uvs;
-    public Dictionary<long, int> middlePointIndexCache;
+    
 
     public SphereMeshData(List<Vector3> vertices, List<Triangle> faces, List<Vector3> normals, List<Vector2> uvs)
     {
