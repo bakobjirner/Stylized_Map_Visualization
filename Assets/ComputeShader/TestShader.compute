@@ -19,51 +19,68 @@ RWStructuredBuffer<Point> points;
 [numthreads(8,8,1)]
 void CSMain (int3 id : SV_DispatchThreadID)
 {
-    float x = id.x / Resolution;
-    float y = id.y / Resolution;
+    float x = (id.x / Resolution - 0.5) * 360;
+    float y = (id.y / Resolution - 0.5) * 180;
     float z = 0.0;
 
-    for(int i = 0; i< 2; i++){
-    Point point1 = points[i];
-    Point point2 = points[i+1];
+    float r = 0;
+    float g = 0;
+    float b = 0;
 
-    float minX;
-    float maxX;
-    float minY;
-    float maxY;
 
-    if (point1.x > point2.x) {
-        minX = point2.x;
-        maxX = point1.x;
-    }
-    else {
-        minX = point1.x;
-        maxX = point2.x;
-    }
-    if (point1.y > point2.y) {
-        minY = point2.y;
-        maxY = point1.y;
-    }
-    else {
-        minY = point1.y;
-        maxY = point2.y;
-    }
-    if (id.x > minX && id.x<maxX && id.y > minY && id.y < maxY) {
+    for(int i = 0; i< NumberOfPoints; i++){
+        
+        //draw lines
+        Point point1 = points[i];
+        Point point2;
+        if (i < NumberOfPoints - 1) {
+            point2 = points[i + 1];
+        }
+        else {
+            point2 = points[0];
+        }
 
- 
-    float slope = (point1.y - point2.y) / (point1.x - point2.x);
-    float yShift = point1.y - (slope * point1.x);
+        float minX;
+        float maxX;
+        float minY;
+        float maxY;
 
-    float distanceFromLine = id.y - int((slope * id.x + yShift));
-    float distanceFromLineSqrt = distanceFromLine * distanceFromLine;
+        if (point1.x > point2.x) {
+            minX = point2.x;
+            maxX = point1.x;
+        }
+        else {
+            minX = point1.x;
+            maxX = point2.x;
+        }
+        if (point1.y > point2.y) {
+            minY = point2.y;
+            maxY = point1.y;
+        }
+        else {
+            minY = point1.y;
+            maxY = point2.y;
+        }
+        if (x > minX && x<maxX && y > minY && y < maxY) {
 
-    if (distanceFromLineSqrt <= Thickness) {
-        z = 1;
-    }
-    }
+
+            float slope = (point1.y - point2.y) / (point1.x - point2.x);
+            float yShift = point1.y - (slope * point1.x);
+            //TODO: better solution for distanceCalculation
+            float distanceFromLineY = y - (slope * x + yShift);
+            float distanceFromLineX = x - ((y - yShift) / slope);
+            float distanceFromLine = sqrt(distanceFromLineY * distanceFromLineY + distanceFromLineX * distanceFromLineX);
+            if (distanceFromLine <= Thickness) {
+                r = 1;
+            }
+        }
+
+        //draw points
+        float distance = sqrt((points[i].x - x) * (points[i].x - x) + (points[i].y - y) * (points[i].y - y));
+        if (distance < Thickness) {
+            g = 1;
+        }
     }
 
-    Result[id.xy] = float4(z,z,z, 0.0);
+    Result[id.xy] = float4(r,g,b, 0.0);
 }
-
-

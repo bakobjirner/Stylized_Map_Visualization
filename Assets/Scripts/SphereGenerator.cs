@@ -36,7 +36,7 @@ public class SphereGenerator
                 data = xmls.Deserialize(stream) as SphereMeshData;
             }
         }
-        catch (FileNotFoundException e)
+        catch
         {
             data = CreateIco(subdivisions);
             WriteFile(data,subdivisions);

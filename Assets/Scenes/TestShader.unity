@@ -123,7 +123,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!84 &642001661
+--- !u!84 &284602986
 RenderTexture:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -137,8 +137,8 @@ RenderTexture:
   m_DownscaleFallback: 0
   m_IsAlphaChannelOptional: 0
   serializedVersion: 5
-  m_Width: 349
-  m_Height: 349
+  m_Width: 10000
+  m_Height: 10000
   m_AntiAliasing: 1
   m_MipCount: -1
   m_DepthStencilFormat: 94
@@ -380,9 +380,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   computeShader: {fileID: 7200000, guid: 1f488a61176230a47b9699e548ac20f1, type: 3}
-  renderTexture: {fileID: 642001661}
+  renderTexture: {fileID: 284602986}
   resolution: 1000
-  lineThickness: 10
+  lineThickness: 0.39
 --- !u!114 &1175584411
 MonoBehaviour:
   m_ObjectHideFlags: 0
