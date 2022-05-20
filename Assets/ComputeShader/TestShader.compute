@@ -1,0 +1,69 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+RWTexture2D<float4> Result;
+
+float Resolution;
+float Thickness;
+float NumberOfPoints;
+
+struct Point {
+    float x;
+    float y;
+};
+
+RWStructuredBuffer<Point> points;
+
+[numthreads(8,8,1)]
+void CSMain (int3 id : SV_DispatchThreadID)
+{
+    float x = id.x / Resolution;
+    float y = id.y / Resolution;
+    float z = 0.0;
+
+    for(int i = 0; i< 2; i++){
+    Point point1 = points[i];
+    Point point2 = points[i+1];
+
+    float minX;
+    float maxX;
+    float minY;
+    float maxY;
+
+    if (point1.x > point2.x) {
+        minX = point2.x;
+        maxX = point1.x;
+    }
+    else {
+        minX = point1.x;
+        maxX = point2.x;
+    }
+    if (point1.y > point2.y) {
+        minY = point2.y;
+        maxY = point1.y;
+    }
+    else {
+        minY = point1.y;
+        maxY = point2.y;
+    }
+    if (id.x > minX && id.x<maxX && id.y > minY && id.y < maxY) {
+
+ 
+    float slope = (point1.y - point2.y) / (point1.x - point2.x);
+    float yShift = point1.y - (slope * point1.x);
+
+    float distanceFromLine = id.y - int((slope * id.x + yShift));
+    float distanceFromLineSqrt = distanceFromLine * distanceFromLine;
+
+    if (distanceFromLineSqrt <= Thickness) {
+        z = 1;
+    }
+    }
+    }
+
+    Result[id.xy] = float4(z,z,z, 0.0);
+}
+
+
