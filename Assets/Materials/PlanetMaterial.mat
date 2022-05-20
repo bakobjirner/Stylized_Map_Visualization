@@ -130,7 +130,7 @@ Material:
     - _WorkflowMode: 1
     - _ZWrite: 1
     - _heightMultiplier: 0.05
-    - _normalStrength: 2
+    - _normalStrength: 1
     - _showElevation: 1
     - _showTexture: 1
     m_Colors:

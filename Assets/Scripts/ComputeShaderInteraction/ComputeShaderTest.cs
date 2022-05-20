@@ -24,11 +24,6 @@ public class ComputeShaderTest : MonoBehaviour
         ComputeBuffer computeBuffer = new ComputeBuffer(data.Length, sizeof(float)*2);
         computeBuffer.SetData(data);
 
-        for(int i = 0; i<data.Length; i++)
-        {
-            Debug.Log(data[i].x + " ; " + data[i].y);
-        }
-
         renderTexture = new RenderTexture(resolution, resolution, 24);
         renderTexture.enableRandomWrite = true;
         renderTexture.Create();
