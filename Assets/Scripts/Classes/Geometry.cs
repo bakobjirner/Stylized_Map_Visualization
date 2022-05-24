@@ -1,21 +1,16 @@
-using System.Collections.Generic;
+
+
+using UnityEngine;
 
 [System.Serializable]
 public class Geometry
 {
     public string type;
-    public Polygon[] coordinates;
+    public object coordinates;
 }
-
 
 [System.Serializable]
 public class Polygon
 {
-    public DataPoint[] points;
-}
-
-[System.Serializable]
-public class DataPoint
-{
-    public double[] values;
+    public double[][] coordinates;
 }

@@ -7,6 +7,7 @@ public class ComputeShaderTest : MonoBehaviour
 {
     public ComputeShader computeShader;
     public RenderTexture renderTexture;
+    public TextAsset geoJson;
     public int resolution = 16;
     [Range(0,10)]
     public float lineThickness = 1;
@@ -20,7 +21,7 @@ public class ComputeShaderTest : MonoBehaviour
 
     private void GenerateTexture()
     {
-        Point[] data = ReadData();
+        Point[] data = getDataFromJson();
         ComputeBuffer computeBuffer = new ComputeBuffer(data.Length, sizeof(float)*2);
         computeBuffer.SetData(data);
 
@@ -50,6 +51,26 @@ public class ComputeShaderTest : MonoBehaviour
             float.TryParse(lineData[1], out points[i].y);
         }
         return points;
+    }
+
+    private Point[] getDataFromJson()
+    {
+        FeatureCollection featureCollection = JsonReader.readGeoJson(geoJson);
+        List<Point> points = new List<Point>();
+        for(int i = 0; i<featureCollection.features.Length; i++)
+        {
+            for (int j = 0; j < featureCollection.features[i].polygons.Length; j++)
+            {
+                for (int k = 0; k < featureCollection.features[i].polygons[j].coordinates.Length; k++)
+                {
+                    Point p = new Point();
+                    p.x = (float)featureCollection.features[i].polygons[j].coordinates[k][0];
+                    p.y = (float)featureCollection.features[i].polygons[j].coordinates[k][1];
+                    points.Add(p);
+                }
+            }
+        }
+        return points.ToArray(); 
     }
 }
 

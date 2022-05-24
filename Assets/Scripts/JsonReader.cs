@@ -1,29 +1,43 @@
-using System.Collections;
-using System.Collections.Generic;
+using Newtonsoft.Json;
 using UnityEngine;
 
-public class JsonReader : MonoBehaviour
+public class JsonReader: MonoBehaviour
 {
-
-    public TextAsset countryJson;
-    public CountryData countryData;
-
-    // Start is called before the first frame update
-    void Start()
+    /**
+     * read GeoJSon from file
+     * */
+    public static FeatureCollection readGeoJson(TextAsset countryJson)
     {
-        countryData = new CountryData();
-        countryData = JsonUtility.FromJson<CountryData>(countryJson.text);
-
-        Feature[] countries = countryData.features;
-        for(int i = 0; i < countries.Length; i++)
+        //deserialize GeoJSON object
+        FeatureCollection countryData = JsonConvert.DeserializeObject<FeatureCollection>(countryJson.text);
+        for(int i = 0; i< countryData.features.Length; i++)
         {
-            Debug.Log(countries[i].geometry.coordinates[0].points);
+            //since the geometry might be either Polygon or Multipolygon, this has to be done manually. TODO: look for libary
+            if(countryData.features[i].geometry.type == "Polygon")
+            {
+                double[][][] coordinates = JsonConvert.DeserializeObject<double[][][]>(countryData.features[i].geometry.coordinates.ToString());
+                countryData.features[i].polygons = new Polygon[1];
+                countryData.features[i].polygons[0] = new Polygon();
+                countryData.features[i].polygons[0].coordinates = coordinates[0];
+            }
+            else if (countryData.features[i].geometry.type == "MultiPolygon")
+            {
+                Debug.Log(countryData.features[i].geometry.coordinates.ToString());
+                double[][][][] coordinates = JsonConvert.DeserializeObject<double[][][][]>(countryData.features[i].geometry.coordinates.ToString());
+                countryData.features[i].polygons = new Polygon[coordinates.Length];
+                for(int j = 0; j< coordinates.Length; j++)
+                {
+                    countryData.features[i].polygons[j] = new Polygon();
+                    countryData.features[i].polygons[j].coordinates = coordinates[j][0];
+                }
+                Debug.Log(countryData.features[i].polygons.Length);
+            }
+            else
+            {
+                Debug.Log("unexpected geometry type");
+            }
         }
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-
+        return countryData;
     }
 }
