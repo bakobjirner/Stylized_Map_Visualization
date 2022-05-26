@@ -22,7 +22,6 @@ public class JsonReader: MonoBehaviour
             }
             else if (countryData.features[i].geometry.type == "MultiPolygon")
             {
-                Debug.Log(countryData.features[i].geometry.coordinates.ToString());
                 double[][][][] coordinates = JsonConvert.DeserializeObject<double[][][][]>(countryData.features[i].geometry.coordinates.ToString());
                 countryData.features[i].polygons = new Polygon[coordinates.Length];
                 for(int j = 0; j< coordinates.Length; j++)
@@ -30,7 +29,6 @@ public class JsonReader: MonoBehaviour
                     countryData.features[i].polygons[j] = new Polygon();
                     countryData.features[i].polygons[j].coordinates = coordinates[j][0];
                 }
-                Debug.Log(countryData.features[i].polygons.Length);
             }
             else
             {

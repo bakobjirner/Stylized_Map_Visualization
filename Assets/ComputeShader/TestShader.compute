@@ -29,52 +29,6 @@ void CSMain (int3 id : SV_DispatchThreadID)
 
 
     for(int i = 0; i< NumberOfPoints; i++){
-        
-        //draw lines
-        Point point1 = points[i];
-        Point point2;
-        if (i < NumberOfPoints - 1) {
-            point2 = points[i + 1];
-        }
-        else {
-            point2 = points[0];
-        }
-
-        float minX;
-        float maxX;
-        float minY;
-        float maxY;
-
-        if (point1.x > point2.x) {
-            minX = point2.x;
-            maxX = point1.x;
-        }
-        else {
-            minX = point1.x;
-            maxX = point2.x;
-        }
-        if (point1.y > point2.y) {
-            minY = point2.y;
-            maxY = point1.y;
-        }
-        else {
-            minY = point1.y;
-            maxY = point2.y;
-        }
-        if (x > minX && x<maxX && y > minY && y < maxY) {
-
-
-            float slope = (point1.y - point2.y) / (point1.x - point2.x);
-            float yShift = point1.y - (slope * point1.x);
-            //TODO: better solution for distanceCalculation
-            float distanceFromLineY = y - (slope * x + yShift);
-            float distanceFromLineX = x - ((y - yShift) / slope);
-            float distanceFromLine = sqrt(distanceFromLineY * distanceFromLineY + distanceFromLineX * distanceFromLineX);
-            if (distanceFromLine <= Thickness) {
-                r = 1;
-            }
-        }
-
         //draw points
         float distance = sqrt((points[i].x - x) * (points[i].x - x) + (points[i].y - y) * (points[i].y - y));
         if (distance < Thickness) {

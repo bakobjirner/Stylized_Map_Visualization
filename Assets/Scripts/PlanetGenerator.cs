@@ -8,9 +8,10 @@ public class PlanetGenerator : MonoBehaviour
     public int details = 5;
 
 
-    public void OnValidate()
+    public void Start()
     {
         CreateSphere();
+        drawData();
     }
 
     public void CreateSphere()
@@ -47,6 +48,13 @@ public class PlanetGenerator : MonoBehaviour
         mesh.RecalculateTangents();
         mesh.RecalculateNormals();
 
+    }
+
+
+    private void drawData()
+    {
+        ComputeShaderTest computeShaderTest =  this.GetComponent<ComputeShaderTest>();
+        this.GetComponent<MeshRenderer>().sharedMaterial.SetTexture("_dataTexture", computeShaderTest.GenerateTexture());
     }
 
 }
