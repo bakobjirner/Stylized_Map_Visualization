@@ -14,7 +14,7 @@ public class ComputeShaderTest : MonoBehaviour
 
     public RenderTexture GenerateTexture()
     {
-        Point[] data = getDataFromJson();
+        Vector2[] data = getDataFromJson();
         ComputeBuffer computeBuffer = new ComputeBuffer(data.Length, sizeof(float)*2);
         computeBuffer.SetData(data);
 
@@ -31,31 +31,24 @@ public class ComputeShaderTest : MonoBehaviour
         return renderTexture;
     }
 
-    private Point[] getDataFromJson()
+    private Vector2[] getDataFromJson()
     {
         FeatureCollection featureCollection = JsonReader.readGeoJson(geoJson);
-        List<Point> points = new List<Point>();
-        for(int i = 0; i<featureCollection.features.Length; i++)
-        {
+        List<Vector2> points = new List<Vector2>();
+        int i = 1;
             for (int j = 0; j < featureCollection.features[i].polygons.Length; j++)
             {
                 for (int k = 0; k < featureCollection.features[i].polygons[j].coordinates.Length; k++)
                 {
-                    Point p = new Point();
+                    Vector2 p = new Vector2();
                     p.x = (float)featureCollection.features[i].polygons[j].coordinates[k][0];
                     p.y = (float)featureCollection.features[i].polygons[j].coordinates[k][1];
                     points.Add(p);
                 }
             }
-        }
+        
         return points.ToArray(); 
     }
-}
-
-public struct Point
-{
-    public float x;
-    public float y;
 }
 
 

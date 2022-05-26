@@ -9,12 +9,62 @@ float Resolution;
 float Thickness;
 float NumberOfPoints;
 
-struct Point {
-    float x;
-    float y;
-};
+RWStructuredBuffer<float2> points;
 
-RWStructuredBuffer<Point> points;
+
+/**
+/calculates the distance of point p to the line between start and end
+**/
+float distanceToLine(float2 start, float2 end, float2 p) {
+
+    //first calculate distances of points
+    float a = distance(start, end);
+    float b = distance(start, p);
+    float c = distance(p, end);
+
+    //calculate area of triangle according to heron
+    float area = 0.25 * sqrt((a + b + c) * (-a + b + c) * (a - b + c) * (a + b - c));
+
+    //calculate heigth of triangle 
+    float height = area * 2 / a;
+
+    //return height of triangle since it is the distance
+    return height;
+}
+
+bool checkOnLine(float2 p1, float2 p2, float2 p) {
+    float minX;
+    float maxX;
+    float minY;
+    float maxY;
+
+    if (p1.x > p2.x) {
+        minX = p2.x;
+        maxX = p1.x;
+    }
+    else {
+        minX = p1.x;
+        maxX = p2.x;
+    }
+    if (p1.y > p2.y) {
+        minY = p2.y;
+        maxY = p1.y;
+    }
+    else {
+        minY = p1.y;
+        maxY = p2.y;
+    }
+    if (p.x > minX && p.x<maxX && p.y > minY && p.y < maxY) {
+
+
+        float dst = distanceToLine(p1, p2, p);
+
+        if (dst < Thickness) {
+            return true;
+        }
+    }
+    return false;
+}
 
 [numthreads(8,8,1)]
 void CSMain (int3 id : SV_DispatchThreadID)
@@ -27,14 +77,27 @@ void CSMain (int3 id : SV_DispatchThreadID)
     float g = 0;
     float b = 0;
 
-
+    /*
     for(int i = 0; i< NumberOfPoints; i++){
         //draw points
-        float distance = sqrt((points[i].x - x) * (points[i].x - x) + (points[i].y - y) * (points[i].y - y));
-        if (distance < Thickness) {
+        float dst = distance(float2(points[i].x, points[i].y), float2(x,y));
+        if (dst < Thickness) {
             g = 1;
         }
     }
+    */
 
+
+    for (int j = 0; j < NumberOfPoints-1; j++) {
+    float2 p1 = points[j];
+    float2 p2 = points[j+1];
+    float2 p = float2(x, y);
+
+    if (checkOnLine(p1, p2, p)) {
+        r = 1;
+    }
+    }
+    
     Result[id.xy] = float4(r,g,b, 0.0);
 }
+
