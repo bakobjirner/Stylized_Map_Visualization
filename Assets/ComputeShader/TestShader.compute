@@ -8,6 +8,7 @@ RWTexture2D<float4> Result;
 float Resolution;
 float Thickness;
 float NumberOfPoints;
+float4 Bounds;
 
 RWStructuredBuffer<float2> points;
 
@@ -38,6 +39,11 @@ bool checkOnLine(float2 p1, float2 p2, float2 p) {
     float minY;
     float maxY;
 
+    //if close to points, return to reduce computing time
+    if (distance(p1,p) < Thickness) {
+        return true;
+    }
+
     if (p1.x > p2.x) {
         minX = p2.x;
         maxX = p1.x;
@@ -54,7 +60,8 @@ bool checkOnLine(float2 p1, float2 p2, float2 p) {
         minY = p1.y;
         maxY = p2.y;
     }
-    if (p.x > minX && p.x<maxX && p.y > minY && p.y < maxY) {
+    //add thickness to min and max, to allow for proper representation of edge-cases
+    if (p.x > minX - Thickness && p.x < maxX + Thickness && p.y > minY - Thickness && p.y < maxY + Thickness) {
 
 
         float dst = distanceToLine(p1, p2, p);
@@ -71,7 +78,11 @@ void CSMain (int3 id : SV_DispatchThreadID)
 {
     float x = (id.x / Resolution - 0.5) * 360;
     float y = (id.y / Resolution - 0.5) * 180;
-    float z = 0.0;
+
+    //check if in country bounds
+    if (x<Bounds.x || x > Bounds.y || y<Bounds.z || y>Bounds.w) {
+        return;
+    }
 
     float r = 0;
     float g = 0;
@@ -95,9 +106,10 @@ void CSMain (int3 id : SV_DispatchThreadID)
 
     if (checkOnLine(p1, p2, p)) {
         r = 1;
+        Result[id.xy] = float4(r, g, b, 0.0);
     }
     }
     
-    Result[id.xy] = float4(r,g,b, 0.0);
+    
 }
 
