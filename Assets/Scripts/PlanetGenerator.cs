@@ -55,15 +55,8 @@ public class PlanetGenerator : MonoBehaviour
     {
         ComputeShaderTest computeShaderTest =  this.GetComponent<ComputeShaderTest>();
 
-        float timeBefore = Time.realtimeSinceStartup;
-
         this.GetComponent<MeshRenderer>().sharedMaterial.SetTexture("_dataTexture", computeShaderTest.generateByPolygons());
 
-        float timeAfter = Time.realtimeSinceStartup;
-
-        float delta = timeAfter - timeBefore;
-
-        Debug.Log("the data-texture has been generated in " + delta + "seconds");
     }
 
 }

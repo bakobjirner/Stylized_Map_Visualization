@@ -52,8 +52,8 @@ public class ComputeShaderTest : MonoBehaviour
                         yMin = p.y;
                     }
                 }
-
-                renderTexture = addPolygonToTexture(coordinates.ToArray(), renderTexture, xMin, xMax, yMin, yMax);
+                Vector4 color = MapColor.color7[featureCollection.features[i].properties.MAPCOLOR7-1];
+                renderTexture = addPolygonToTexture(coordinates.ToArray(), renderTexture, xMin, xMax, yMin, yMax,color);
             }
         }
         return renderTexture;
@@ -61,7 +61,7 @@ public class ComputeShaderTest : MonoBehaviour
 
 
 
-    private RenderTexture addPolygonToTexture(Vector2[] polygonData, RenderTexture texture, float xMin, float xMax, float yMin, float yMax)
+    private RenderTexture addPolygonToTexture(Vector2[] polygonData, RenderTexture texture, float xMin, float xMax, float yMin, float yMax, Vector4 color)
     {
         Vector4 bounds = new Vector4(xMin, xMax, yMin, yMax);
         ComputeBuffer computeBuffer = new ComputeBuffer(polygonData.Length, sizeof(float) * 2);
@@ -70,6 +70,7 @@ public class ComputeShaderTest : MonoBehaviour
         computeShader.SetFloat("Resolution", resolution);
         computeShader.SetFloat("Thickness", lineThickness);
         computeShader.SetVector("Bounds", bounds);
+        computeShader.SetVector("Color", color);
         computeShader.SetFloat("NumberOfPoints", polygonData.Length);
         computeShader.SetBuffer(0, "points", computeBuffer);
         computeShader.Dispatch(0, texture.width / 8, texture.height / 8, 1);

@@ -9,6 +9,7 @@ float Resolution;
 float Thickness;
 float NumberOfPoints;
 float4 Bounds;
+float4 Color;
 
 RWStructuredBuffer<float2> points;
 
@@ -73,6 +74,31 @@ bool checkOnLine(float2 p1, float2 p2, float2 p) {
     return false;
 }
 
+/**
+ * Based on an algorithm of https://www.algorithms-and-technologies.com/point_in_polygon
+ * Performs the even-odd-rule Algorithm to find out whether a point is in a given polygon.
+ * This runs in O(n) where n is the number of edges of the polygon.
+ */
+bool pointInPolygon(float2 p) {
+    //A point is in a polygon if a line from the point to infinity crosses the polygon an odd number of times
+    bool odd = false; // Starting with the edge from the last to the first node
+    //For each edge (In this case for each point of the polygon and the previous one)
+    int j = NumberOfPoints - 1;
+    for (int i = 0; i < NumberOfPoints; i++) { 
+        //If a line from the point into infinity crosses this edge
+        // One point needs to be above, one below our y coordinate
+        if (((points[i].y > p.y) != (points[j].y > p.y))
+                // ...and the edge doesn't cross our Y corrdinate before our x coordinate (but between our x coordinate and infinity)
+            && (p.x < (points[j].x - points[i].x) * (p.y - points[i].y) / (points[j].y - points[i].y) + points[i].x)) {
+            // Invert odd
+            odd = !odd;
+        }
+        j = i;
+    }
+    //If the number of crossings was odd, the point is in the polygon
+    return odd;
+}
+
 [numthreads(8,8,1)]
 void CSMain (int3 id : SV_DispatchThreadID)
 {
@@ -88,6 +114,7 @@ void CSMain (int3 id : SV_DispatchThreadID)
     float g = 0;
     float b = 0;
 
+    //draw Points
     /*
     for(int i = 0; i< NumberOfPoints; i++){
         //draw points
@@ -98,7 +125,16 @@ void CSMain (int3 id : SV_DispatchThreadID)
     }
     */
 
+    //fill polygons
+    if (pointInPolygon(float2(x, y))) {
+        r = Color.x;
+        g = Color.y;
+        b = Color.z;
+        Result[id.xy] = float4(r, g, b, 0.0);
+    }
 
+
+    //draw lines
     for (int j = 0; j < NumberOfPoints-1; j++) {
     float2 p1 = points[j];
     float2 p2 = points[j+1];
@@ -106,10 +142,10 @@ void CSMain (int3 id : SV_DispatchThreadID)
 
     if (checkOnLine(p1, p2, p)) {
         r = 1;
+        g = 1;
+        b = 1;
         Result[id.xy] = float4(r, g, b, 0.0);
     }
     }
-    
-    
 }
 
