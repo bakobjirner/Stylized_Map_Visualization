@@ -13,27 +13,32 @@ public class ComputeShaderTest : MonoBehaviour
 
     public RenderTexture generateByPolygons()
     {
+        Debug.Log("start Shader setup: " + Time.realtimeSinceStartup);
         RenderTexture renderTexture = new RenderTexture(resolution, resolution, 24);
         renderTexture.enableRandomWrite = true;
         FeatureCollection featureCollection = JsonReader.readGeoJson(geoJson);
+        List<List<List<Vector2>>> coordinates = new List<List<List<Vector2>>>();
+        List<List<Vector4>> bounds = new List<List<Vector4>>();
+        List<Vector4> colors = new List<Vector4>();
         for (int i = 0; i < featureCollection.features.Length; i++)
         {
+            coordinates.Add(new List<List<Vector2>>());
+            bounds.Add(new List<Vector4>());
             for (int j = 0; j < featureCollection.features[i].polygons.Length; j++)
             {
+                coordinates[i].Add(new List<Vector2>());
                 //the highest and lowest points of the polygon
                 float xMin = resolution;
                 float xMax = 0;
                 float yMin = resolution;
                 float yMax = 0;
 
-
-                List<Vector2> coordinates = new List<Vector2>();
                 for (int k = 0; k < featureCollection.features[i].polygons[j].coordinates.Length; k++)
                 {
                     Vector2 p = new Vector2();
                     p.x = (float)featureCollection.features[i].polygons[j].coordinates[k][0];
                     p.y = (float)featureCollection.features[i].polygons[j].coordinates[k][1];
-                    coordinates.Add(p);
+                    coordinates[i][j].Add(p);
 
                     //set border points
                     if (p.x > xMax)
@@ -52,18 +57,32 @@ public class ComputeShaderTest : MonoBehaviour
                         yMin = p.y;
                     }
                 }
-                Vector4 color = MapColor.color7[featureCollection.features[i].properties.MAPCOLOR7-1];
-                renderTexture = addPolygonToTexture(coordinates.ToArray(), renderTexture, xMin, xMax, yMin, yMax,color);
+                bounds[i].Add(new Vector4(xMin, xMax, yMin, yMax));
+            }
+            colors.Add(MapColor.color7[featureCollection.features[i].properties.MAPCOLOR7-1]);
+        }
+
+        featureCollection.bounds = bounds;
+        featureCollection.colors = colors;
+        featureCollection.coordinates = coordinates;
+        Debug.Log("end Shader setup: " + Time.realtimeSinceStartup);
+        
+        for (int i = 0; i < featureCollection.features.Length; i++)
+        {
+            for (int j = 0; j < featureCollection.features[i].polygons.Length; j++)
+            {
+                renderTexture = addPolygonToTexture(coordinates[i][j].ToArray(), renderTexture, bounds[i][j],colors[i]);
             }
         }
+        Debug.Log("end Shader calculations: " + Time.realtimeSinceStartup);
+        CheckInPolygon.featureCollection = featureCollection;
         return renderTexture;
     }
 
 
 
-    private RenderTexture addPolygonToTexture(Vector2[] polygonData, RenderTexture texture, float xMin, float xMax, float yMin, float yMax, Vector4 color)
+    private RenderTexture addPolygonToTexture(Vector2[] polygonData, RenderTexture texture, Vector4 bounds, Vector4 color)
     {
-        Vector4 bounds = new Vector4(xMin, xMax, yMin, yMax);
         ComputeBuffer computeBuffer = new ComputeBuffer(polygonData.Length, sizeof(float) * 2);
         computeBuffer.SetData(polygonData);
         computeShader.SetTexture(0, "Result", texture);

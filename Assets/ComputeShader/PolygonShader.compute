@@ -1,0 +1,64 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+RWTexture2D<float4> Result;
+
+float Resolution;
+float Thickness;
+float NumberOfPoints;
+float4 Bounds;
+float4 Color;
+
+RWStructuredBuffer<float2> points;
+
+/**
+ * Based on an algorithm of https://www.algorithms-and-technologies.com/point_in_polygon
+ * Performs the even-odd-rule Algorithm to find out whether a point is in a given polygon.
+ * This runs in O(n) where n is the number of edges of the polygon.
+ */
+bool pointInPolygon(float2 p) {
+    //A point is in a polygon if a line from the point to infinity crosses the polygon an odd number of times
+    bool odd = false; // Starting with the edge from the last to the first node
+    //For each edge (In this case for each point of the polygon and the previous one)
+    int j = NumberOfPoints - 1;
+    for (int i = 0; i < NumberOfPoints; i++) { 
+        //If a line from the point into infinity crosses this edge
+        // One point needs to be above, one below our y coordinate
+        if (((points[i].y > p.y) != (points[j].y > p.y))
+                // ...and the edge doesn't cross our Y corrdinate before our x coordinate (but between our x coordinate and infinity)
+            && (p.x < (points[j].x - points[i].x) * (p.y - points[i].y) / (points[j].y - points[i].y) + points[i].x)) {
+            // Invert odd
+            odd = !odd;
+        }
+        j = i;
+    }
+    //If the number of crossings was odd, the point is in the polygon
+    return odd;
+}
+
+[numthreads(8,8,1)]
+void CSMain (int3 id : SV_DispatchThreadID)
+{
+    float x = (id.x / Resolution - 0.5) * 360;
+    float y = (id.y / Resolution - 0.5) * 180;
+
+    //check if in country bounds
+    if (x<Bounds.x || x > Bounds.y || y<Bounds.z || y>Bounds.w) {
+        return;
+    }
+
+    float r = 0;
+    float g = 0;
+    float b = 0;
+
+    //fill polygons
+    if (pointInPolygon(float2(x, y))) {
+        r = Color.x;
+        g = Color.y;
+        b = Color.z;
+        Result[id.xy] = float4(r, g, b, 0.0);
+    }
+}
+

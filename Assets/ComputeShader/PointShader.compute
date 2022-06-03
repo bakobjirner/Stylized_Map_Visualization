@@ -1,0 +1,45 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+RWTexture2D<float4> Result;
+
+float Resolution;
+float Thickness;
+float NumberOfPoints;
+float4 Bounds;
+float4 Color;
+
+RWStructuredBuffer<float2> points;
+
+[numthreads(8,8,1)]
+void CSMain (int3 id : SV_DispatchThreadID)
+{
+    float x = (id.x / Resolution - 0.5) * 360;
+    float y = (id.y / Resolution - 0.5) * 180;
+
+    //check if in country bounds
+    if (x<Bounds.x || x > Bounds.y || y<Bounds.z || y>Bounds.w) {
+        return;
+    }
+
+    float r = 0;
+    float g = 0;
+    float b = 0;
+
+    //draw Points
+    for(int i = 0; i< NumberOfPoints; i++){
+        //draw points
+        float dst = distance(float2(points[i].x, points[i].y), float2(x,y));
+        if (dst < Thickness) {
+            r = Color.x;
+            g = Color.y;
+            b = Color.z;
+            Result[id.xy] = float4(r, g, b, 0.0);
+        }
+    }
+
+   
+}
+

@@ -10,7 +10,9 @@ public class PlanetGenerator : MonoBehaviour
 
     public void Start()
     {
+        Debug.Log("start sphere creation: " + Time.realtimeSinceStartup);
         CreateSphere();
+        Debug.Log("end sphere creation: " + Time.realtimeSinceStartup);
         drawData();
     }
 
@@ -57,6 +59,15 @@ public class PlanetGenerator : MonoBehaviour
 
         this.GetComponent<MeshRenderer>().sharedMaterial.SetTexture("_dataTexture", computeShaderTest.generateByPolygons());
 
+        int featureIndex = CheckInPolygon.GetFeatureByCoordiantes(new Vector2(9, 49));
+        if (featureIndex == -1)
+        {
+            Debug.Log("no feature");
+        }
+        else
+        {
+            Debug.Log(CheckInPolygon.featureCollection.features[featureIndex].properties.NAME);
+        }
     }
 
 }
