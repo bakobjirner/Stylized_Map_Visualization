@@ -7,12 +7,13 @@ public class PlanetGenerator : MonoBehaviour
     [Range(1,7)]
     public int details = 5;
 
+    public bool sphere = true;
 
     public void Start()
     {
-        Debug.Log("start sphere creation: " + Time.realtimeSinceStartup);
+        Debug.Log("start mesh creation: " + Time.realtimeSinceStartup);
         CreateSphere();
-        Debug.Log("end sphere creation: " + Time.realtimeSinceStartup);
+        Debug.Log("end mesh creation: " + Time.realtimeSinceStartup);
         drawData();
     }
 
@@ -37,13 +38,23 @@ public class PlanetGenerator : MonoBehaviour
         //set indexformat to allow for meshes with more than 65536 Vertices
         mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
 
-        SphereMeshData data = SphereGenerator.GetSphere(details);
-        //list to array
+        MeshData data;
+        
+        if (sphere)
+        {
+             data = SphereGenerator.GetSphere(details);
+            //list to array
+            
+        }
+        else
+        {
+            data = PlaneGenerator.getPlane(details*500, .45f,.55f,.75f,.85f);
+        }
+        
         mesh.vertices = data.getVerticeArray();
         mesh.triangles = data.getTriangleArray();
         mesh.normals = data.getNormalArray();
         mesh.uv = data.getUVArray();
-        
 
         //recalculate mesh
         mesh.RecalculateBounds();
@@ -51,6 +62,8 @@ public class PlanetGenerator : MonoBehaviour
         mesh.RecalculateNormals();
 
     }
+
+  
 
 
     private void drawData()

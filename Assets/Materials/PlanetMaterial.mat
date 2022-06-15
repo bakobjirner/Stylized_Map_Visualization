@@ -133,11 +133,13 @@ Material:
     - _Surface: 0
     - _WorkflowMode: 1
     - _ZWrite: 1
-    - _heightMultiplier: 0.05
-    - _normalStrength: 1
+    - _heightMultiplier: 0.1
+    - _normalStrength: 0.5
     - _showData: 0
     - _showElevation: 1
     - _showTexture: 1
+    - _singleColorWater: 0
+    - _spherical: 0
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}

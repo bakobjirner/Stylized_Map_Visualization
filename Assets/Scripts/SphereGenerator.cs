@@ -9,14 +9,14 @@ public class SphereGenerator
 
     public static Dictionary<long, int> middlePointIndexCache;
 
-    public static SphereMeshData GetSphere(int subdivisions)
+    public static MeshData GetSphere(int subdivisions)
     {
         return ReadFile(subdivisions);
     }
 
-    public static void WriteFile(SphereMeshData data,int subdivisions)
+    public static void WriteFile(MeshData data,int subdivisions)
     {
-        XmlSerializer xmls = new XmlSerializer(typeof(SphereMeshData));
+        XmlSerializer xmls = new XmlSerializer(typeof(MeshData));
 
         using (var stream = File.OpenWrite("mesh"+subdivisions+".xml"))
         {
@@ -24,16 +24,16 @@ public class SphereGenerator
         }
     }
 
-    public static SphereMeshData ReadFile(int subdivisions)
+    public static MeshData ReadFile(int subdivisions)
     {
 
-        SphereMeshData data;
-        XmlSerializer xmls = new XmlSerializer(typeof(SphereMeshData));
+        MeshData data;
+        XmlSerializer xmls = new XmlSerializer(typeof(MeshData));
         try
         {
             using (var stream = File.OpenRead("mesh" + subdivisions + ".xml"))
             {
-                data = xmls.Deserialize(stream) as SphereMeshData;
+                data = xmls.Deserialize(stream) as MeshData;
             }
         }
         catch
@@ -46,10 +46,10 @@ public class SphereGenerator
 
 
 
-    private static SphereMeshData CreateIco(int subdivisions)
+    private static MeshData CreateIco(int subdivisions)
     {
 
-        SphereMeshData data = new SphereMeshData();
+        MeshData data = new MeshData();
         List<Vector3> vertList;
 
         middlePointIndexCache = new Dictionary<long, int>();
@@ -142,7 +142,7 @@ public class SphereGenerator
     }
 
 
-    private static void SubdivideFaces(SphereMeshData data, int numberOfSubdivisions)
+    private static void SubdivideFaces(MeshData data, int numberOfSubdivisions)
     {
 
         //in case somebody enters a value that is to high. do not remove if you aren't absolutely sure what youre doing. Will slow down computer
@@ -174,7 +174,7 @@ public class SphereGenerator
 
 
     // return index of vertice in the middle of p1 and p2, creates new vertice if it doesn't exist yet
-    private static int MiddlePoint(int p1, int p2, SphereMeshData data)
+    private static int MiddlePoint(int p1, int p2, MeshData data)
     {
         // get key of searched point in dictionary by combining the indexes of the two points
         bool firstIsSmaller = p1 < p2;
@@ -217,7 +217,7 @@ public class SphereGenerator
     /**
      * detect which triangles sit on the seem. find them by looking for inverted normals
      * */
-    private static int[] DetectWrappedUVCoordinates(SphereMeshData data)
+    private static int[] DetectWrappedUVCoordinates(MeshData data)
     {
         List<int> indices = new List<int>();
         for (int i = 0; i < data.faces.Count; ++i)
@@ -241,7 +241,7 @@ public class SphereGenerator
     /**
      * duplicate vertices that cause seem disfraction
      * */
-    private static void FixWrappedUV(int[] wrapped, SphereMeshData data)
+    private static void FixWrappedUV(int[] wrapped, MeshData data)
     {
         int verticeIndex = data.vertices.Count - 1;
         Dictionary<int, int> visited = new Dictionary<int, int>();

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<SphereMeshData xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<MeshData xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <vertices>
     <x>-0.5257311</x>
     <y>0.8506508</y>
@@ -247104,4 +247104,4 @@
     <x>1.01957333</x>
     <y>0.109305106</y>
   </uvs>
-</SphereMeshData>
+</MeshData>ereMeshData>
