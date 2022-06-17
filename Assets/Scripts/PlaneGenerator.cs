@@ -7,9 +7,14 @@ using UnityEngine;
 public class PlaneGenerator : MonoBehaviour
 {
     //create a basic plane
-    public static MeshData getPlane(int details, float xStart, float xEnd, float yStart, float yEnd)
+    public static MeshData getPlane(int details, Vector4 bounds)
     {
         int resolutionX = details;
+        float xStart = bounds.x / 360 + .5f;
+        float xEnd = bounds.y / 360 + .5f;
+        float yStart = bounds.z / 180 + .5f;
+        float yEnd = bounds.w / 180 + .5f;
+
 
         float ratio = (yEnd - yStart) / (xEnd - xStart);
         int resolutionZ = (int)(details*ratio);

@@ -8,6 +8,7 @@ public class JsonReader: MonoBehaviour
      * */
     public static FeatureCollection readGeoJson(TextAsset countryJson)
     {
+        Debug.Log("start reading geoJson: " + Time.realtimeSinceStartup);
         //deserialize GeoJSON object
         FeatureCollection countryData = JsonConvert.DeserializeObject<FeatureCollection>(countryJson.text);
         for(int i = 0; i< countryData.features.Length; i++)
@@ -35,7 +36,7 @@ public class JsonReader: MonoBehaviour
                 Debug.Log("unexpected geometry type");
             }
         }
-
+        Debug.Log("end reading geoJson: " + Time.realtimeSinceStartup);
         return countryData;
     }
 }

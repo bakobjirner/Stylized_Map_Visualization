@@ -14,12 +14,13 @@ public class ComputeShaderTest : MonoBehaviour
     public RenderTexture generateByPolygons()
     {
         Debug.Log("start Shader setup: " + Time.realtimeSinceStartup);
-        RenderTexture renderTexture = new RenderTexture(resolution, resolution, 24);
+        RenderTexture renderTexture = new RenderTexture(resolution, resolution, 0);
         renderTexture.enableRandomWrite = true;
         FeatureCollection featureCollection = JsonReader.readGeoJson(geoJson);
         List<List<List<Vector2>>> coordinates = new List<List<List<Vector2>>>();
         List<List<Vector4>> bounds = new List<List<Vector4>>();
         List<Vector4> colors = new List<Vector4>();
+        Debug.Log("start calculating minMax: " + Time.realtimeSinceStartup);
         for (int i = 0; i < featureCollection.features.Length; i++)
         {
             coordinates.Add(new List<List<Vector2>>());
@@ -61,7 +62,6 @@ public class ComputeShaderTest : MonoBehaviour
             }
             colors.Add(MapColor.color7[featureCollection.features[i].properties.MAPCOLOR7-1]);
         }
-
         featureCollection.bounds = bounds;
         featureCollection.colors = colors;
         featureCollection.coordinates = coordinates;
@@ -95,6 +95,19 @@ public class ComputeShaderTest : MonoBehaviour
         computeShader.Dispatch(0, texture.width / 8, texture.height / 8, 1);
         computeBuffer.Release();
         return texture;
+    }
+
+    public RenderTexture getFeatureMask(int featureIndex)
+    {
+        //TODO: solve differently
+        resolution *= 3;
+        RenderTexture renderTexture = new RenderTexture(resolution, resolution, 0);
+        renderTexture.enableRandomWrite = true;
+        for (int j = 0; j < CheckInPolygon.featureCollection.features[featureIndex].polygons.Length; j++)
+        {
+            renderTexture = addPolygonToTexture(CheckInPolygon.featureCollection.coordinates[featureIndex][j].ToArray(), renderTexture, CheckInPolygon.featureCollection.bounds[featureIndex][j],Color.white);
+        }
+        return renderTexture;
     }
 }
 

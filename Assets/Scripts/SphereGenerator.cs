@@ -1,54 +1,66 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
+using Newtonsoft.Json;
+using UnityEditor;
 using UnityEngine;
 
 public class SphereGenerator
 {
-
     public static Dictionary<long, int> middlePointIndexCache;
 
-    public static MeshData GetSphere(int subdivisions)
+    public static MeshData GetSphere(int subdivisions, bool useStorage)
     {
-        return ReadFile(subdivisions);
+        if (useStorage)
+        {
+            return ReadFile(subdivisions);
+        }
+        else
+        {
+            return CreateIco(subdivisions);
+        }
     }
 
-    public static void WriteFile(MeshData data,int subdivisions)
+    public static void WriteFile(MeshData data, int subdivisions)
     {
-        XmlSerializer xmls = new XmlSerializer(typeof(MeshData));
-
-        using (var stream = File.OpenWrite("mesh"+subdivisions+".xml"))
-        {
-            xmls.Serialize(stream, data);
-        }
+        string path = "Assets/Resources/meshData/meshJSon" + subdivisions + ".txt";
+        StreamWriter writer = new StreamWriter(path, false);
+        string text = JsonConvert.SerializeObject(data);
+        writer.Write(text);
+        writer.Close();
     }
 
     public static MeshData ReadFile(int subdivisions)
     {
-
         MeshData data;
-        XmlSerializer xmls = new XmlSerializer(typeof(MeshData));
+        string path = "Assets/Resources/meshData/meshJSon" + subdivisions + ".txt";
+
         try
         {
-            using (var stream = File.OpenRead("mesh" + subdivisions + ".xml"))
-            {
-                data = xmls.Deserialize(stream) as MeshData;
-            }
+            Debug.Log("start reading file: " + Time.realtimeSinceStartup);
+            AssetDatabase.ImportAsset(path);
+            TextAsset asset = (TextAsset)Resources.Load("meshData/meshJSon" + subdivisions);
+            data = JsonConvert.DeserializeObject<MeshData>(asset.text);
+            Debug.Log("end reading file: " + Time.realtimeSinceStartup);
         }
-        catch
+        catch (Exception e)
         {
+            Debug.LogError("reading file not possible: " + e.Message);
             data = CreateIco(subdivisions);
-            WriteFile(data,subdivisions);
+            Debug.Log("start writing file: " + Time.realtimeSinceStartup);
+            WriteFile(data, subdivisions);
+            Debug.Log("end writing file: " + Time.realtimeSinceStartup);
         }
+
         return data;
     }
 
 
-
     private static MeshData CreateIco(int subdivisions)
     {
-
+        Debug.Log("start calculating mesh: " + Time.realtimeSinceStartup);
         MeshData data = new MeshData();
         List<Vector3> vertList;
 
@@ -127,7 +139,6 @@ public class SphereGenerator
         data.uvs = uvs;
 
         int[] wrapped = DetectWrappedUVCoordinates(data);
-        Debug.Log(wrapped.Length);
         FixWrappedUV(wrapped, data);
 
         //set normals, simply use position of the point so all normals point outward
@@ -136,18 +147,18 @@ public class SphereGenerator
         {
             data.normals.Add(vertList[i].normalized);
         }
-
-
+        Debug.Log("end calculating mesh: " + Time.realtimeSinceStartup);
         return data;
     }
 
 
     private static void SubdivideFaces(MeshData data, int numberOfSubdivisions)
     {
-
         //in case somebody enters a value that is to high. do not remove if you aren't absolutely sure what youre doing. Will slow down computer
         if (numberOfSubdivisions > 8)
         {
+            Debug.Log(
+                "are you sure that you want to enter such a high value??? If you really have that much time (half an hour on ryzen 2600), remove this blocker");
             numberOfSubdivisions = 2;
         }
 
@@ -167,10 +178,10 @@ public class SphereGenerator
                 facesDivided.Add(new Triangle(tri.v3, c, b));
                 facesDivided.Add(new Triangle(a, b, c));
             }
+
             data.faces = facesDivided;
         }
     }
-
 
 
     // return index of vertice in the middle of p1 and p2, creates new vertice if it doesn't exist yet
@@ -233,8 +244,8 @@ public class SphereGenerator
             {
                 indices.Add(i);
             }
-
         }
+
         return indices.ToArray();
     }
 
@@ -265,9 +276,10 @@ public class SphereGenerator
                     visited[a] = verticeIndex;
                     tempA = verticeIndex;
                 }
+
                 a = tempA;
-                Debug.Log(i);
             }
+
             if (B.x < 0.25f)
             {
                 int tempB = b;
@@ -280,9 +292,10 @@ public class SphereGenerator
                     visited[b] = verticeIndex;
                     tempB = verticeIndex;
                 }
+
                 b = tempB;
-                Debug.Log(i);
             }
+
             if (C.x < 0.25f)
             {
                 int tempC = c;
@@ -295,13 +308,13 @@ public class SphereGenerator
                     visited[c] = verticeIndex;
                     tempC = verticeIndex;
                 }
+
                 c = tempC;
-                Debug.Log(i);
             }
+
             data.faces[i].v1 = a;
             data.faces[i].v2 = b;
             data.faces[i].v3 = c;
         }
     }
-
 }
