@@ -1,14 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using BAMCIS.GeoJSON;
 using UnityEngine;
 
 public class CheckInPolygon
 {
 
-    public static FeatureCollection featureCollection;
+    public static GeoData geoData;
     
     private static bool PointInPolygon(Vector2 p, List<Vector2> polygon, Vector4 bounds)
     {
+        Debug.Log("test");
         //check if in country bounds
         if (p.x < bounds.x || p.x > bounds.y || p.y < bounds.z || p.y > bounds.w)
         {
@@ -37,11 +40,11 @@ public class CheckInPolygon
 
     public static int GetFeatureByCoordiantes(Vector2 p)
     {
-        for (int i = 0; i < featureCollection.coordinates.Count; i++)
+        for (int i = 0; i < geoData.coordinates.Count; i++)
         {
-            for (int j = 0; j < featureCollection.coordinates[i].Count; j++)
+            for (int j = 0; j < geoData.coordinates[i].Count; j++)
             {
-                if (PointInPolygon(p, featureCollection.coordinates[i][j], featureCollection.bounds[i][j]))
+                if (PointInPolygon(p, geoData.coordinates[i][j], geoData.bounds[i][j]))
                 {
                     return i;
                 }

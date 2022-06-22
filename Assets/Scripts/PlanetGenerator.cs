@@ -10,6 +10,7 @@ public class PlanetGenerator : MonoBehaviour
     public RenderTexture featureMask;
     private Vector4 featureBounds = new Vector4(0, 0, .5f, .5f);
     public bool useStorage;
+    public GameObject water;
 
 
     public void Start()
@@ -74,12 +75,13 @@ public class PlanetGenerator : MonoBehaviour
 
     public void ShowDetailView(int featureIndex)
     {
-        featureBounds = CheckInPolygon.featureCollection.bounds[featureIndex][0];
+        water.SetActive(true);
+        featureBounds = CheckInPolygon.geoData.bounds[featureIndex][0];
 
         //calculate total bounds for features with multiple subfeatures
-        for (int i = 0; i < CheckInPolygon.featureCollection.bounds[featureIndex].Count; i++)
+        for (int i = 0; i < CheckInPolygon.geoData.bounds[featureIndex].Count; i++)
         {
-            Vector4 b = CheckInPolygon.featureCollection.bounds[featureIndex][i];
+            Vector4 b = CheckInPolygon.geoData.bounds[featureIndex][i];
             if (b.x < featureBounds.x)
             {
                 featureBounds.x = b.x;
