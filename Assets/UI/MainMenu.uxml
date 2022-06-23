@@ -1,0 +1,8 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement>
+        <ui:VisualElement name="top_row" style="align-items: flex-start; justify-content: space-between; flex-direction: row;">
+            <ui:Button text="Exit" display-tooltip-when-elided="true" name="exit" style="height: 62px; width: 166px; background-color: rgb(255, 255, 255); color: rgb(58, 58, 58); font-size: 42px; -unity-font-style: bold; border-left-width: 0; border-right-width: 0; border-top-width: 0; border-bottom-width: 0;" />
+            <ui:Label text="World" display-tooltip-when-elided="true" name="country_name" style="height: 56px; width: 492px; justify-content: flex-start; font-size: 44px; -unity-text-align: upper-right; flex-direction: column; color: rgba(255, 255, 255, 255);" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

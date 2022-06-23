@@ -44,10 +44,23 @@ public class PlanetMovement : MonoBehaviour
                     {
                         Debug.Log(hit.textureCoord);
                         Debug.Log(pos);
+                        cameraHolder.rotation = Quaternion.Euler(90,0,0);
+                        transform.rotation = Quaternion.identity;
                         this.GetComponent<PlanetGenerator>().ShowDetailView(featureIndex);
                         global = false;
                     }
                 }
+            }
+        }
+        else
+        {
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                cameraHolder.rotation = Quaternion.Euler(45,0,0);
+                transform.rotation = Quaternion.identity;
+                camera.transform.localPosition = new Vector3(0, 0, -2);
+                this.GetComponent<PlanetGenerator>().ShowGlobalView();
+                global = true;
             }
         }
     }

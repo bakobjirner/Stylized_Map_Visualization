@@ -40,7 +40,7 @@ public class SphereGenerator
         try
         {
             Debug.Log("start reading file: " + Time.realtimeSinceStartup);
-            AssetDatabase.ImportAsset(path);
+            //AssetDatabase.ImportAsset(path);
             TextAsset asset = (TextAsset)Resources.Load("meshData/meshJSon" + subdivisions);
             data = JsonConvert.DeserializeObject<MeshData>(asset.text);
             Debug.Log("end reading file: " + Time.realtimeSinceStartup);

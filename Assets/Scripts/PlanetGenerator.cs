@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class PlanetGenerator : MonoBehaviour
 {
@@ -11,6 +13,8 @@ public class PlanetGenerator : MonoBehaviour
     private Vector4 featureBounds = new Vector4(0, 0, .5f, .5f);
     public bool useStorage;
     public GameObject water;
+
+    public UIController ui;
 
 
     public void Start()
@@ -73,8 +77,19 @@ public class PlanetGenerator : MonoBehaviour
             .SetTexture("_dataTexture", computeShaderTest.generateByPolygons());
     }
 
+    public void ShowGlobalView()
+    {
+        ui.SetCountryName("World");
+        water.SetActive(false);
+        this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_spherical",1);
+        sphere = true;
+        this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_useFeatureMask",0);
+        CreateMesh();
+    }
+
     public void ShowDetailView(int featureIndex)
     {
+        ui.SetCountryName(CheckInPolygon.geoData.featureCollection.Features.ToList()[featureIndex].Properties["name"]);
         water.SetActive(true);
         featureBounds = CheckInPolygon.geoData.bounds[featureIndex][0];
 

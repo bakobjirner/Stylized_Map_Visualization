@@ -10,8 +10,7 @@ public class ComputeShaderTest : MonoBehaviour
     public ComputeShader computeShader;
     public TextAsset geoJson;
     public int resolution = 16;
-    [Range(0,10)]
-    public float lineThickness = 1;
+    [Range(0, 10)] public float lineThickness = 1;
 
     public RenderTexture generateByPolygons()
     {
@@ -28,24 +27,27 @@ public class ComputeShaderTest : MonoBehaviour
         for (int i = 0; i < features.Count; i++)
         {
             int a = (int)features[i].Properties["mapcolor7"];
-            colors.Add(MapColor.color7[a-1]);
-            
+            colors.Add(MapColor.color7[a - 1]);
+
             List<Polygon> polygons = new List<Polygon>();
-           
+
             if (features[i].Geometry.Type.Equals(GeoJsonType.MultiPolygon))
             {
                 polygons = ((MultiPolygon)features[i].Geometry).Coordinates.ToList();
-            }else if (features[i].Geometry.Type.Equals(GeoJsonType.Polygon))
+            }
+            else if (features[i].Geometry.Type.Equals(GeoJsonType.Polygon))
             {
                 polygons.Add((Polygon)features[i].Geometry);
             }
+
             allPolygons.Add(polygons);
         }
+
         //featureCollection.bounds = bounds;
         //featureCollection.colors = colors;
         //featureCollection.coordinates = coordinates;
         Debug.Log("end Shader setup: " + Time.realtimeSinceStartup);
-        
+
         for (int i = 0; i < allPolygons.Count; i++)
         {
             bounds.Add(new List<Vector4>());
@@ -55,7 +57,7 @@ public class ComputeShaderTest : MonoBehaviour
                 coordinates[i].Add(new List<Vector2>());
                 Polygon p = allPolygons[i][j];
                 Position[] polygonData = p.Coordinates.First().Coordinates.ToArray();
-                
+
                 // calc bounds
                 float xMin = resolution;
                 float xMax = 0;
@@ -63,11 +65,11 @@ public class ComputeShaderTest : MonoBehaviour
                 float yMax = 0;
 
                 Vector2[] pData = new Vector2[polygonData.Length];
-                
+
 
                 for (int k = 0; k < polygonData.Length; k++)
                 {
-                    Vector2 vector2 = new Vector2((float)polygonData[k].Longitude,(float)polygonData[k].Latitude);
+                    Vector2 vector2 = new Vector2((float)polygonData[k].Longitude, (float)polygonData[k].Latitude);
                     coordinates[i][j].Add(vector2);
                     pData[k] = vector2;
                     //set border points
@@ -92,9 +94,10 @@ public class ComputeShaderTest : MonoBehaviour
 
                 Vector4 myBounds = new Vector4(xMin, xMax, yMin, yMax);
                 bounds[i].Add(myBounds);
-                renderTexture = addPolygonToTexture(pData, renderTexture, myBounds,colors[i]);
+                renderTexture = addPolygonToTexture(pData, renderTexture, myBounds, colors[i]);
             }
         }
+
         Debug.Log("end Shader calculations: " + Time.realtimeSinceStartup);
         geoData.bounds = bounds;
         geoData.coordinates = coordinates;
@@ -102,10 +105,9 @@ public class ComputeShaderTest : MonoBehaviour
         return renderTexture;
     }
 
-    
 
-
-    private RenderTexture addPolygonToTexture(Vector2[] polygonData, RenderTexture texture, Vector4 bounds, Vector4 color)
+    private RenderTexture addPolygonToTexture(Vector2[] polygonData, RenderTexture texture, Vector4 bounds,
+        Vector4 color)
     {
         ComputeBuffer computeBuffer = new ComputeBuffer(polygonData.Length, sizeof(float) * 2);
         computeBuffer.SetData(polygonData);
@@ -123,30 +125,27 @@ public class ComputeShaderTest : MonoBehaviour
 
     public RenderTexture getFeatureMask(int featureIndex)
     {
-        //TODO: solve resolution scale differently
-        resolution *= 3;
-        
         RenderTexture renderTexture = new RenderTexture(resolution, resolution, 0);
         renderTexture.enableRandomWrite = true;
-        
+
         List<Polygon> polygons = new List<Polygon>();
         Feature feature = CheckInPolygon.geoData.featureCollection.Features.ToList()[featureIndex];
 
         if (feature.Geometry.Type.Equals(GeoJsonType.MultiPolygon))
         {
             polygons = ((MultiPolygon)feature.Geometry).Coordinates.ToList();
-        }else if (feature.Geometry.Type.Equals(GeoJsonType.Polygon))
+        }
+        else if (feature.Geometry.Type.Equals(GeoJsonType.Polygon))
         {
             polygons.Add((Polygon)feature.Geometry);
         }
-        
+
         for (int j = 0; j < polygons.Count; j++)
         {
-            renderTexture = addPolygonToTexture(CheckInPolygon.geoData.coordinates[featureIndex][j].ToArray(), renderTexture, CheckInPolygon.geoData.bounds[featureIndex][j],Color.white);
+            renderTexture = addPolygonToTexture(CheckInPolygon.geoData.coordinates[featureIndex][j].ToArray(),
+                renderTexture, CheckInPolygon.geoData.bounds[featureIndex][j], Color.white);
         }
-        
+
         return renderTexture;
     }
 }
-
-
