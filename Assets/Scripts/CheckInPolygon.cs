@@ -11,7 +11,6 @@ public class CheckInPolygon
     
     private static bool PointInPolygon(Vector2 p, List<Vector2> polygon, Vector4 bounds)
     {
-        Debug.Log("test");
         //check if in country bounds
         if (p.x < bounds.x || p.x > bounds.y || p.y < bounds.z || p.y > bounds.w)
         {

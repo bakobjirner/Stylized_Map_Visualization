@@ -1,19 +1,22 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using UnityEditor;
+using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 public class PlanetGenerator : MonoBehaviour
 {
-    [Range(1, 7)] public int details = 5;
+    [Range(1, 8)] public int details = 5;
 
     public bool sphere = true;
     public RenderTexture featureMask;
     private Vector4 featureBounds = new Vector4(0, 0, .5f, .5f);
-    public bool useStorage;
-    public GameObject waterPlane;
-    public GameObject waterSphere;
+    public GameObject ocean;
+    public Mesh[] sphereMeshes = new Mesh[8];
+    public Mesh[] planeMeshes = new Mesh[8];
 
     public UIController ui;
 
@@ -21,36 +24,22 @@ public class PlanetGenerator : MonoBehaviour
     public void Start()
     {
         Debug.Log("start Planet Generation: " + Time.realtimeSinceStartup);
-        CreateMesh();
+       ShowGlobalView();
+        
         drawData();
     }
 
-    public void CreateMesh()
+    public Mesh CreateMesh()
     {
         Debug.Log("start mesh setup: " + Time.realtimeSinceStartup);
         //get mesh of Gameobject
-        MeshFilter filter = this.GetComponent<MeshFilter>();
-        Mesh mesh;
-        if (filter.sharedMesh != null)
-        {
-            mesh = filter.sharedMesh;
-        }
-        else
-        {
-            mesh = new Mesh();
-            filter.sharedMesh = mesh;
-        }
-
-        //clear mesh if not empty
-        mesh.Clear();
+        Mesh mesh = new Mesh();
         //set indexformat to allow for meshes with more than 65536 Vertices
         mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
-
         MeshData data;
-
         if (sphere)
         {
-            data = SphereGenerator.GetSphere(details, useStorage);
+            data = SphereGenerator.GetSphere(details);
             //list to array
         }
         else
@@ -67,7 +56,9 @@ public class PlanetGenerator : MonoBehaviour
         mesh.RecalculateBounds();
         mesh.RecalculateTangents();
         mesh.RecalculateNormals();
+        return mesh;
     }
+    
 
 
     private void drawData()
@@ -80,20 +71,28 @@ public class PlanetGenerator : MonoBehaviour
 
     public void ShowGlobalView()
     {
+        Mesh mesh;
         ui.SetCountryName("World");
-        waterPlane.SetActive(false);
-        waterSphere.SetActive(true);
         this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_spherical",1);
         sphere = true;
         this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_useFeatureMask",0);
-        CreateMesh();
+        if (sphereMeshes[details-1] == null)
+        {
+            Debug.Log("no mesh set, new one will be created");
+            mesh = CreateMesh();
+        }
+        else
+        {
+            Debug.Log("load precalculated mesh-data");
+            mesh = sphereMeshes[details - 1];
+        }
+        this.GetComponent<MeshFilter>().sharedMesh = mesh;
+        ocean.GetComponent<MeshFilter>().sharedMesh = mesh;
     }
 
     public void ShowDetailView(int featureIndex)
     {
         ui.SetCountryName(CheckInPolygon.geoData.featureCollection.Features.ToList()[featureIndex].Properties["name"]);
-         waterPlane.SetActive(true);
-         waterSphere.SetActive(false);
         featureBounds = CheckInPolygon.geoData.bounds[featureIndex][0];
 
         //calculate total bounds for features with multiple subfeatures
@@ -126,6 +125,8 @@ public class PlanetGenerator : MonoBehaviour
         featureMask = this.GetComponent<ComputeShaderTest>().getFeatureMask(featureIndex);
         this.GetComponent<MeshRenderer>().sharedMaterial.SetTexture("_featureMask",featureMask);
         this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_useFeatureMask",1);
-        CreateMesh();
+        Mesh mesh = CreateMesh();
+        this.GetComponent<MeshFilter>().sharedMesh = mesh;
+        ocean.GetComponent<MeshFilter>().sharedMesh = mesh;
     }
 }
