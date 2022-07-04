@@ -5,6 +5,9 @@
     "m_Properties": [
         {
             "m_Id": "cffe5ac98b784a6eadf5259d71d0fcb3"
+        },
+        {
+            "m_Id": "dfee8c8561334675a9ea1d19c0f7e6bb"
         }
     ],
     "m_Keywords": [],
@@ -1054,6 +1057,9 @@
     "m_ChildObjectList": [
         {
             "m_Id": "cffe5ac98b784a6eadf5259d71d0fcb3"
+        },
+        {
+            "m_Id": "dfee8c8561334675a9ea1d19c0f7e6bb"
         }
     ]
 }
@@ -1312,6 +1318,33 @@
         "m_SerializableColors": []
     },
     "m_SerializedDescriptor": "SurfaceDescription.Occlusion"
+}
+
+{
+    "m_SGVersion": 1,
+    "m_Type": "UnityEditor.ShaderGraph.Internal.Vector1ShaderProperty",
+    "m_ObjectId": "dfee8c8561334675a9ea1d19c0f7e6bb",
+    "m_Guid": {
+        "m_GuidSerialized": "cf355902-734b-47d6-92e7-39115c3e8b25"
+    },
+    "m_Name": "speed",
+    "m_DefaultRefNameVersion": 1,
+    "m_RefNameGeneratedByDisplayName": "speed",
+    "m_DefaultReferenceName": "_speed",
+    "m_OverrideReferenceName": "",
+    "m_GeneratePropertyBlock": true,
+    "m_UseCustomSlotLabel": false,
+    "m_CustomSlotLabel": "",
+    "m_Precision": 0,
+    "overrideHLSLDeclaration": false,
+    "hlslDeclarationOverride": 0,
+    "m_Hidden": false,
+    "m_Value": 0.10000000149011612,
+    "m_FloatType": 0,
+    "m_RangeValues": {
+        "x": 0.0,
+        "y": 1.0
+    }
 }
 
 {
