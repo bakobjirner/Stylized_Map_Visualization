@@ -12,7 +12,8 @@ public class PlanetGenerator : MonoBehaviour
     public RenderTexture featureMask;
     private Vector4 featureBounds = new Vector4(0, 0, .5f, .5f);
     public bool useStorage;
-    public GameObject water;
+    public GameObject waterPlane;
+    public GameObject waterSphere;
 
     public UIController ui;
 
@@ -54,7 +55,7 @@ public class PlanetGenerator : MonoBehaviour
         }
         else
         {
-            data = PlaneGenerator.getPlane(details * 200, featureBounds);
+            data = PlaneGenerator.getPlane(details*5, featureBounds);
         }
 
         mesh.vertices = data.getVerticeArray();
@@ -80,7 +81,8 @@ public class PlanetGenerator : MonoBehaviour
     public void ShowGlobalView()
     {
         ui.SetCountryName("World");
-        water.SetActive(false);
+        waterPlane.SetActive(false);
+        waterSphere.SetActive(true);
         this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_spherical",1);
         sphere = true;
         this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_useFeatureMask",0);
@@ -90,7 +92,8 @@ public class PlanetGenerator : MonoBehaviour
     public void ShowDetailView(int featureIndex)
     {
         ui.SetCountryName(CheckInPolygon.geoData.featureCollection.Features.ToList()[featureIndex].Properties["name"]);
-        water.SetActive(true);
+         waterPlane.SetActive(true);
+         waterSphere.SetActive(false);
         featureBounds = CheckInPolygon.geoData.bounds[featureIndex][0];
 
         //calculate total bounds for features with multiple subfeatures
