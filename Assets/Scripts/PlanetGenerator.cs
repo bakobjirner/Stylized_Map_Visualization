@@ -64,9 +64,13 @@ public class PlanetGenerator : MonoBehaviour
     private void drawData()
     {
         ComputeShaderTest computeShaderTest = this.GetComponent<ComputeShaderTest>();
+        RenderTexture[] textures = computeShaderTest.generateByPolygons();
 
-        this.GetComponent<MeshRenderer>().sharedMaterial
-            .SetTexture("_dataTexture", computeShaderTest.generateByPolygons());
+        this.GetComponent<MeshRenderer>().sharedMaterial.SetTexture("_dataTexture", textures[0]);
+        this.GetComponent<MeshRenderer>().sharedMaterial.SetTexture("_oceanTexture", textures[1]);
+        this.GetComponent<MeshRenderer>().sharedMaterial.SetTexture("_gdpTexture", textures[2]);
+        this.GetComponent<MeshRenderer>().sharedMaterial.SetTexture("_gdppcTexture", textures[3]);
+        this.GetComponent<MeshRenderer>().sharedMaterial.SetTexture("_populationTexture", textures[4]);
     }
 
     public void ShowGlobalView()

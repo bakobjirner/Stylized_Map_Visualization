@@ -12,11 +12,20 @@ public class ComputeShaderTest : MonoBehaviour
     public int resolution = 16;
     [Range(0, 10)] public float lineThickness = 1;
 
-    public RenderTexture generateByPolygons()
+    public RenderTexture[] generateByPolygons()
     {
+        RenderTexture[] textures;
         Debug.Log("start Shader setup: " + Time.realtimeSinceStartup);
-        RenderTexture renderTexture = new RenderTexture(resolution, resolution, 0);
-        renderTexture.enableRandomWrite = true;
+        RenderTexture colorTexture = new RenderTexture(resolution, resolution, 0);
+        RenderTexture oceanTexture = new RenderTexture(resolution, resolution, 0);
+        RenderTexture gdpTexture = new RenderTexture(resolution, resolution, 0);
+        RenderTexture gdppcTexture = new RenderTexture(resolution, resolution, 0);
+        RenderTexture populationTexture = new RenderTexture(resolution, resolution, 0);
+        oceanTexture.enableRandomWrite = true;
+        gdpTexture.enableRandomWrite = true;
+        gdppcTexture.enableRandomWrite = true;
+        populationTexture.enableRandomWrite = true;
+        colorTexture.enableRandomWrite = true;
         GeoData geoData = JsonReader.readGeoJson(geoJson);
         List<Vector4> colors = new List<Vector4>();
         List<List<Vector4>> bounds = new List<List<Vector4>>();
@@ -26,7 +35,7 @@ public class ComputeShaderTest : MonoBehaviour
         List<List<Polygon>> allPolygons = new List<List<Polygon>>();
         for (int i = 0; i < features.Count; i++)
         {
-            int a = (int)features[i].Properties["mapcolor7"];
+            int a = (int)features[i].Properties["MAPCOLOR7"];
             colors.Add(MapColor.color7[a - 1]);
 
             List<Polygon> polygons = new List<Polygon>();
@@ -92,9 +101,26 @@ public class ComputeShaderTest : MonoBehaviour
                     }
                 }
 
+                Vector4 colorGDP;
+                Vector4 colorGDPPC;
+                Vector4 colorPop;
+                
+                float gdp = (float)features[i].Properties["GDP_MD"];
+                colorGDP = new Vector4(gdp / 100000, gdp / 100000, gdp / 100000, 1);
+
+                float pop = (float)features[i].Properties["POP_EST"];
+                colorPop = new Vector4(pop / 100000000, pop / 100000000, pop / 100000000, 1);
+                
+                float gdppc = gdp / pop;
+                colorGDPPC = new Vector4(gdppc * 10, gdppc * 10, gdppc * 10, 1);
+                
                 Vector4 myBounds = new Vector4(xMin, xMax, yMin, yMax);
                 bounds[i].Add(myBounds);
-                renderTexture = addPolygonToTexture(pData, renderTexture, myBounds, colors[i]);
+                colorTexture = addPolygonToTexture(pData, colorTexture, myBounds, colors[i]);
+                oceanTexture = addPolygonToTexture(pData, oceanTexture, myBounds, Vector4.one);
+                gdpTexture = addPolygonToTexture(pData, gdpTexture, myBounds, colorGDP);
+                gdppcTexture = addPolygonToTexture(pData, gdppcTexture, myBounds, colorGDPPC);
+                populationTexture = addPolygonToTexture(pData, populationTexture, myBounds, colorPop);
             }
         }
 
@@ -102,9 +128,9 @@ public class ComputeShaderTest : MonoBehaviour
         geoData.bounds = bounds;
         geoData.coordinates = coordinates;
         CheckInPolygon.geoData = geoData;
-        return renderTexture;
+        textures = new[] { colorTexture, oceanTexture, gdpTexture, gdppcTexture, populationTexture };
+        return textures;
     }
-
 
     private RenderTexture addPolygonToTexture(Vector2[] polygonData, RenderTexture texture, Vector4 bounds,
         Vector4 color)
