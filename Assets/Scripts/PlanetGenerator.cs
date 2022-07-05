@@ -133,4 +133,45 @@ public class PlanetGenerator : MonoBehaviour
         this.GetComponent<MeshFilter>().sharedMesh = mesh;
         ocean.GetComponent<MeshFilter>().sharedMesh = mesh;
     }
+
+    public void setMode(string mode)
+    {
+     switch (mode)
+        {
+            case "heigth":
+            {
+                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDP",0);
+                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDPPC",0);
+                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showPopulation",0);
+                break;
+            }
+            case "gdp":
+            {
+                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDP",1);
+                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDPPC",0);
+                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showPopulation",0);
+                break;
+            }
+            case "gdp per capita":
+            {
+                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDP",0);
+                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDPPC",1);
+                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showPopulation",0);
+                break;
+            }
+            case "population":
+            {
+                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDP",0);
+                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDPPC",0);
+                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showPopulation",1);
+                break;
+            }default:
+            {
+                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDP",0);
+                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDPPC",0);
+                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showPopulation",0);
+                break;
+            }
+        }
+    }
 }
