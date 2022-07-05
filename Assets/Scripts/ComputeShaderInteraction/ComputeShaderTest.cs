@@ -10,6 +10,8 @@ public class ComputeShaderTest : MonoBehaviour
     public ComputeShader computeShader;
     public TextAsset geoJson;
     public int resolution = 16;
+    private float maxGDP = 21000000;
+    private float maxPop = 1400000000;
     [Range(0, 10)] public float lineThickness = 1;
 
     public RenderTexture[] generateByPolygons()
@@ -105,14 +107,14 @@ public class ComputeShaderTest : MonoBehaviour
                 Vector4 colorGDPPC;
                 Vector4 colorPop;
                 
-                float gdp = (float)features[i].Properties["GDP_MD"];
-                colorGDP = new Vector4(gdp / 100000, gdp / 100000, gdp / 100000, 1);
+                float gdp = (float)features[i].Properties["GDP_MD"] / maxGDP;
+                colorGDP = new Vector4(gdp, gdp, gdp, 1);
 
-                float pop = (float)features[i].Properties["POP_EST"];
-                colorPop = new Vector4(pop / 100000000, pop / 100000000, pop / 100000000, 1);
+                float pop = (float)features[i].Properties["POP_EST"]/maxPop;
+                colorPop = new Vector4(pop, pop, pop, 1);
                 
-                float gdppc = gdp / pop;
-                colorGDPPC = new Vector4(gdppc * 10, gdppc * 10, gdppc * 10, 1);
+                float gdppc = (gdp / pop) / 10;
+                colorGDPPC = new Vector4(gdppc, gdppc, gdppc, 1);
                 
                 Vector4 myBounds = new Vector4(xMin, xMax, yMin, yMax);
                 bounds[i].Add(myBounds);
