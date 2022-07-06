@@ -5,10 +5,6 @@
             <ui:Label text="World" display-tooltip-when-elided="true" name="country_name" style="height: 56px; width: 492px; justify-content: flex-start; font-size: 44px; -unity-text-align: upper-right; flex-direction: column; color: rgb(255, 255, 255);" />
         </ui:VisualElement>
     </ui:VisualElement>
-    <ui:RadioButtonGroup label="Mode" value="-1" name="rb_group" style="align-items: flex-start; flex-direction: column;">
-        <ui:RadioButton label="height" name="rb_height" />
-        <ui:RadioButton label="gdp" name="rb_gdp" />
-        <ui:RadioButton label="gdp per capita" name="rb_gdppc" />
-        <ui:RadioButton label="population" name="rb_population" />
-    </ui:RadioButtonGroup>
+    <ui:Button text="set mode" display-tooltip-when-elided="true" name="set_mode" style="height: 62px; width: 166px; background-color: rgb(255, 255, 255); color: rgb(58, 58, 58); font-size: 25px; -unity-font-style: bold; border-left-width: 0; border-right-width: 0; border-top-width: 0; border-bottom-width: 0;" />
+    <ui:DropdownField index="-1" choices="System.Collections.Generic.List`1[System.String]" name="dropdown" style="width: 166px; height: 62px;" />
 </ui:UXML>
