@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UIElements;
 
 public class PlanetMovement : MonoBehaviour
@@ -11,7 +12,7 @@ public class PlanetMovement : MonoBehaviour
 
     public Transform cameraHolder;
 
-    public Transform camera;
+    public Transform myCamera;
 
     // Start is called before the first frame update
     void Start()
@@ -21,9 +22,9 @@ public class PlanetMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.RotateAround(Vector3.up, Input.GetAxis("Horizontal") * Time.deltaTime * speed);
-        cameraHolder.RotateAround(Vector3.right, Input.GetAxis("Vertical") * Time.deltaTime * speed);
-        camera.transform.Translate(Input.GetAxis("Mouse ScrollWheel") * Time.deltaTime * scrollSpeed * Vector3.forward);
+        transform.Rotate(Vector3.up, Input.GetAxis("Horizontal") * Time.deltaTime * speed);
+        cameraHolder.Rotate(Vector3.right, Input.GetAxis("Vertical") * Time.deltaTime * speed);
+        myCamera.transform.Translate(Input.GetAxis("Mouse ScrollWheel") * Time.deltaTime * scrollSpeed * Vector3.forward);
 
         if (global)
         {
@@ -58,7 +59,7 @@ public class PlanetMovement : MonoBehaviour
             {
                 cameraHolder.rotation = Quaternion.Euler(45,0,0);
                 transform.rotation = Quaternion.identity;
-                camera.transform.localPosition = new Vector3(0, 0, -2);
+                myCamera.transform.localPosition = new Vector3(0, 0, -2);
                 this.GetComponent<PlanetGenerator>().ShowGlobalView();
                 global = true;
             }
