@@ -14,6 +14,8 @@ public class ObjectSpawner : MonoBehaviour
     public float radius = 1;
     public TextAsset cityJson;
     private FeatureCollection cities;
+    public Texture2D heightmap;
+    public float heightMultiplier = .1f;
     
     //threshold values to decide which category a city belongs to
     [Range(0,10000000)]
@@ -38,24 +40,30 @@ public class ObjectSpawner : MonoBehaviour
     private void placeAllHouses()
     {
         List<Feature> cityList = cities.Features.ToList();
+        int textureSizeX = heightmap.height;
+        int textureSizeY = heightmap.width;
         for (int i = 0; i < cityList.Count; i++)
         {
+            
             float lat = (float)cityList[i].Properties["LATITUDE"];
             float lon = (float)cityList[i].Properties["LONGITUDE"];
+            int pixelLat = (int)(((lat / 180) + .5f) * textureSizeY)*-1;
+            int pixelLon = (int)(((lat / 360) + .5f) * textureSizeX);
+            float height = heightmap.GetPixel(pixelLon, pixelLat).r;
             int population = (int)cityList[i].Properties["POP_MAX"];
             if (population > minBigCity)
             {
-                placeHouse(lat,lon,CitySize.BIG);  
+                placeHouse(lat,lon,CitySize.BIG,height);  
             }else if (population > minMediumCity)
             {
-                placeHouse(lat,lon,CitySize.MEDIUM);  
+                placeHouse(lat,lon,CitySize.MEDIUM,height);  
             }else if (population > minSmallCity)
             {
-                placeHouse(lat,lon,CitySize.SMALL);  
+                placeHouse(lat,lon,CitySize.SMALL,height);  
             }
         }
     }
-    private void placeHouse(float lat, float lon, CitySize size)
+    private void placeHouse(float lat, float lon, CitySize size, float heigth)
     {
         GameObject myHouse;
         switch (size)
@@ -68,7 +76,7 @@ public class ObjectSpawner : MonoBehaviour
               break;
           default: return;
         }
-        Vector3 pos = getPointOnSphere(lat, lon);
+        Vector3 pos = getPointOnSphere(lat, lon)*(1+heigth*heightMultiplier);
         Instantiate(myHouse, pos, Quaternion.LookRotation(pos),transform);
     }
 
@@ -82,6 +90,6 @@ public class ObjectSpawner : MonoBehaviour
         float r = Mathf.Cos(lat);
         float x = Mathf.Sin(lon) * r;
         float z = -Mathf.Cos(lon) * r;
-        return new Vector3(x, y, z);
+        return new Vector3(x, y, z).normalized;
     }
 }
