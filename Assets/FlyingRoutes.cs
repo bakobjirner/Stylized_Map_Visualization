@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -8,11 +9,40 @@ using UnityEngine;
 public class FlyingRoutes : MonoBehaviour
 {
     public TextAsset flightRoutesJson;
+    public TextAsset cleanFlightDataJson;
+    string path = "Assets/Resources/cleanFlightData.json";
     Dictionary<string, Airport> airportMap = new Dictionary<string, Airport>();
     private List<Flight> flights = new List<Flight>();
 
     // Start is called before the first frame update
     void Start()
+    {
+        
+    }
+
+    public void readFlightData()
+    {
+        CleanFlightData flightData;
+        if (cleanFlightDataJson != null)
+        {
+            flightData = readCleanFile();
+        }
+        else
+        {
+            flightData = readOriginalFile();
+        }
+    }
+
+    private CleanFlightData readCleanFile()
+    {
+        return JsonUtility.FromJson<CleanFlightData>(cleanFlightDataJson.text);
+    }
+
+    /**
+     * this function reads and cleans up the original flight-data-file from https://raw.githubusercontent.com/Jonty/airline-route-data/main/airline_routes.json
+     * Only use if there is no clean file present
+     */
+    private CleanFlightData readOriginalFile()
     {
         string jsonText = flightRoutesJson.text;
         AirportData airportData = JsonConvert.DeserializeObject<AirportData>(jsonText);
@@ -41,8 +71,14 @@ public class FlyingRoutes : MonoBehaviour
         {
             try
             {
-                flights[i].start = airportMap[flights[i].airport1];
-                flights[i].destination = airportMap[flights[i].airport2];
+                Airport start = airportMap[flights[i].startCode];
+                Airport destination = airportMap[flights[i].destinationCode];
+                flights[i].startName = start.name;
+                flights[i].destinationName = destination.name;
+                flights[i].startCountry = start.country;
+                flights[i].destinationCountry = destination.country;
+                flights[i].startLocation = new Vector2(float.Parse(start.latitude),float.Parse(start.longitude));
+                flights[i].destinationLocation = new Vector2(float.Parse(destination.latitude),float.Parse(destination.longitude));
             }
             catch (Exception e)
             {
@@ -51,12 +87,11 @@ public class FlyingRoutes : MonoBehaviour
             }
         }
 
-        Debug.Log(JsonConvert.SerializeObject(flights));
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        CleanFlightData cleanFlightData = new CleanFlightData();
+        cleanFlightData.flights = flights.ToArray();
+        StreamWriter writer = new StreamWriter(path, false);
+        writer.Write(JsonUtility.ToJson(cleanFlightData));
+        writer.Close();
+        return cleanFlightData;
     }
 }

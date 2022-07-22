@@ -1,29 +1,25 @@
 using System;
+using UnityEngine;
 
 [Serializable]
 public class Flight
 {
- public string airport1;
- public string airport2;
- public Airport start;
- public Airport destination;
+ public string startCode;
+ public string destinationCode;
+ public string startName;
+ public string destinationName;
+ public Vector2 startLocation;
+ public Vector2 destinationLocation;
+ public string startCountry;
+ public string destinationCountry;
  public int duration;
  public int distance;
- public Flight(string airport1, string airport2, int duration, int distance)
+ public Flight(string startCode, string destinationCode, int duration, int distance)
  {
-  this.airport1 = airport1;
-  this.airport2 = airport2;
+  this.startCode = startCode;
+  this.destinationCode = destinationCode;
   this.duration = duration;
   this.distance = distance;
  }
- 
- public Flight(Airport start, Airport destination,int duration, int distance)
- {
-  this.duration = duration;
-  this.distance = distance;
-  this.start = start;
-  this.destination = destination;
- }
-
 }
 
