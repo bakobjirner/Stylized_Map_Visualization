@@ -4,42 +4,41 @@ using UnityEngine;
 
 public class Airplane : MonoBehaviour
 {
-
-public Vector3 start;
-public Vector3 destination;
-public float height = 5;
-private float pos;
-public Transform plane;
-private float distance;
+    public float height = 5;
+    private float pos;
+    public Transform plane;
+    private float distance;
+    public float speed = .1f;
 
 
     // Start is called before the first frame update
     void Start()
     {
+        Init(new Vector3(0,-1,0), new Vector3(.7f,0,-.7f), 1);
+    }
+
+    public void Init(Vector3 start, Vector3 destination, float height )
+    {
         //set middle of parabola between start and destination
         transform.position = (destination + start) / 2;
-        
         //point parabola towards destination
-        transform.LookAt(destination);
-        
-        //set up direction to point outwards
-        //transform.Rotate(transform.forward,180);
-        
+        transform.LookAt(destination, transform.position.normalized);
         //set distance 
         distance = Vector3.Distance(start, destination);
-        pos = -distance/2;
+        pos = -distance / 2;
+        this.height = height;
     }
 
     // Update is called once per frame
     void Update()
     {
-        pos += Time.deltaTime;
-        if (pos > distance/2)
+        pos += Time.deltaTime*speed;
+        if (pos > distance / 2)
         {
-            pos = -distance/2;
+            pos = -distance / 2;
         }
 
-        plane.transform.localPosition = new Vector3(0, getPointOnParabola(pos, distance,height), pos);
+        plane.transform.localPosition = new Vector3(0, getPointOnParabola(pos, distance, height), pos);
     }
 
     /*
@@ -53,6 +52,6 @@ private float distance;
         //stretch in y dir by desired height y = (-((2x/distance))^2+1)*height
         //to simplify calculation: a = ((2x/distance))
         float a = (2 * position / distance);
-        return (-a*a+1)*height;
+        return (-a * a + 1) * height;
     }
 }
