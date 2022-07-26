@@ -14,7 +14,7 @@ public class Airplane : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Init(new Vector3(0,-1,0), new Vector3(.7f,0,-.7f), 1);
+        Init(new Vector3(0,-1.01f,0), new Vector3(.71f,0,-.71f), 1);
     }
 
     public void Init(Vector3 start, Vector3 destination, float height )
@@ -35,10 +35,12 @@ public class Airplane : MonoBehaviour
         pos += Time.deltaTime*speed;
         if (pos > distance / 2)
         {
-            pos = -distance / 2;
+            Destroy(this.gameObject);
         }
-
-        plane.transform.localPosition = new Vector3(0, getPointOnParabola(pos, distance, height), pos);
+        Vector3 nextPos = new Vector3(0, getPointOnParabola(pos, distance, height), pos);
+        Debug.DrawRay(plane.position, (transform.TransformDirection(nextPos)-transform.TransformDirection(plane.localPosition))*10000);
+        plane.LookAt(transform.TransformPoint(nextPos),plane.position);
+        plane.localPosition = nextPos;
     }
 
     /*

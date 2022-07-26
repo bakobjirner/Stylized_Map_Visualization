@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
 using UnityEngine;
+using Random = System.Random;
 
 public class FlyingRoutes : MonoBehaviour
 {
@@ -13,16 +14,17 @@ public class FlyingRoutes : MonoBehaviour
     string path = "Assets/Resources/cleanFlightData.json";
     Dictionary<string, Airport> airportMap = new Dictionary<string, Airport>();
     private List<Flight> flights = new List<Flight>();
+    CleanFlightData flightData;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        readFlightData();
+        startPlane();
     }
 
     public void readFlightData()
     {
-        CleanFlightData flightData;
         if (cleanFlightDataJson != null)
         {
             flightData = readCleanFile();
@@ -94,4 +96,10 @@ public class FlyingRoutes : MonoBehaviour
         writer.Close();
         return cleanFlightData;
     }
+
+    private void startPlane()
+    {
+      
+    }
+    
 }
