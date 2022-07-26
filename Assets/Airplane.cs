@@ -9,15 +9,10 @@ public class Airplane : MonoBehaviour
     public Transform plane;
     private float distance;
     public float speed = .1f;
+    public Transform startMesh;
+    public Transform targetMesh;
 
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        Init(new Vector3(0,-1.01f,0), new Vector3(.71f,0,-.71f), 1);
-    }
-
-    public void Init(Vector3 start, Vector3 destination, float height )
+    public void Init(Vector3 start, Vector3 destination, float height , float speed)
     {
         //set middle of parabola between start and destination
         transform.position = (destination + start) / 2;
@@ -27,6 +22,9 @@ public class Airplane : MonoBehaviour
         distance = Vector3.Distance(start, destination);
         pos = -distance / 2;
         this.height = height;
+        this.speed = speed*distance;
+        startMesh.position = start;
+        targetMesh.position = destination;
     }
 
     // Update is called once per frame
@@ -38,7 +36,6 @@ public class Airplane : MonoBehaviour
             Destroy(this.gameObject);
         }
         Vector3 nextPos = new Vector3(0, getPointOnParabola(pos, distance, height), pos);
-        Debug.DrawRay(plane.position, (transform.TransformDirection(nextPos)-transform.TransformDirection(plane.localPosition))*10000);
         plane.LookAt(transform.TransformPoint(nextPos),plane.position);
         plane.localPosition = nextPos;
     }
