@@ -71,6 +71,7 @@ public class PlanetGenerator : MonoBehaviour
         this.GetComponent<MeshRenderer>().sharedMaterial.SetTexture("_gdpTexture", textures[2]);
         this.GetComponent<MeshRenderer>().sharedMaterial.SetTexture("_gdppcTexture", textures[3]);
         this.GetComponent<MeshRenderer>().sharedMaterial.SetTexture("_populationTexture", textures[4]);
+        this.GetComponent<MeshRenderer>().sharedMaterial.SetTexture("_cityTexture", textures[5]);
     }
 
     public void ShowGlobalView()

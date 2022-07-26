@@ -94,7 +94,6 @@ public class FlyingRoutes : MonoBehaviour
                 flights[i].startCountry = start.country;
                 flights[i].destinationCountry = destination.country;
                 //additional parse arguments to accept decimal point
-                
                 flights[i].startLocation = new Vector2(float.Parse(start.latitude, ni), float.Parse(start.longitude,ni));
                 flights[i].destinationLocation = new Vector2(float.Parse(destination.latitude,ni), float.Parse(destination.longitude,ni));
             }
@@ -120,6 +119,11 @@ public class FlyingRoutes : MonoBehaviour
         Airplane airplane = Instantiate(airplanePrefab, Vector3.zero, Quaternion.identity, this.transform);
         Vector3 start = transform.TransformPoint(getPointOnSphere(flight.startLocation.x, flight.startLocation.y));
         Vector3 destination = transform.TransformPoint(getPointOnSphere(flight.destinationLocation.x, flight.destinationLocation.y));
+        //make sure no flight with the same start and destination gets called
+        if (flight.startLocation ==  flight.destinationLocation|| flight.startName.Equals("")||flight.destinationName.Equals(""))
+        {
+            return;
+        }
         airplane.Init(start, destination, height, speed);
         Debug.Log("started airplane from: " + flight.startName + " " + flight.startLocation + " to " +
                   flight.destinationName + " " + flight.destinationLocation);
