@@ -27,6 +27,7 @@ public class UIController : MonoBehaviour
         choices.Add("gdp");
         choices.Add("gdp per capita");
         choices.Add("population");
+        choices.Add("night");
         dropdownField.choices = choices;
         exitButton.clicked += Exit;
         modeButton.clicked += SetMode;

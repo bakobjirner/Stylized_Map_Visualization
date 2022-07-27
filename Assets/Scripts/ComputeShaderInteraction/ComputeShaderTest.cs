@@ -193,7 +193,7 @@ public class ComputeShaderTest : MonoBehaviour
 
     private RenderTexture getCityOutlineTexture()
     {
-        int resolution = this.resolution * 2;
+        int resolution = this.resolution * 4;
         FeatureCollection cityData = FeatureCollection.FromJson(cityOutlineJson.text);
         RenderTexture cityTexture = new RenderTexture(resolution, resolution, 0);
         cityTexture.enableRandomWrite = true;

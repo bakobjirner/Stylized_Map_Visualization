@@ -5,6 +5,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEditor.VersionControl;
 using UnityEngine;
+using UnityEngine.Experimental.GlobalIllumination;
 using UnityEngine.UIElements;
 
 public class PlanetGenerator : MonoBehaviour
@@ -17,6 +18,7 @@ public class PlanetGenerator : MonoBehaviour
     public GameObject ocean;
     public Mesh[] sphereMeshes = new Mesh[8];
     public Mesh[] planeMeshes = new Mesh[8];
+    public GameObject sun;
 
     public UIController ui;
 
@@ -24,8 +26,8 @@ public class PlanetGenerator : MonoBehaviour
     public void Start()
     {
         Debug.Log("start Planet Generation: " + Time.realtimeSinceStartup);
-       ShowGlobalView();
-        
+        ShowGlobalView();
+
         drawData();
     }
 
@@ -44,7 +46,7 @@ public class PlanetGenerator : MonoBehaviour
         }
         else
         {
-            data = PlaneGenerator.getPlane(details*5, featureBounds);
+            data = PlaneGenerator.getPlane(details * 5, featureBounds);
         }
 
         mesh.vertices = data.getVerticeArray();
@@ -58,7 +60,6 @@ public class PlanetGenerator : MonoBehaviour
         mesh.RecalculateNormals();
         return mesh;
     }
-    
 
 
     private void drawData()
@@ -78,10 +79,10 @@ public class PlanetGenerator : MonoBehaviour
     {
         Mesh mesh;
         ui.SetCountryName("World");
-        this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_spherical",1);
+        this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_spherical", 1);
         sphere = true;
-        this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_useFeatureMask",0);
-        if (sphereMeshes[details-1] == null)
+        this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_useFeatureMask", 0);
+        if (sphereMeshes[details - 1] == null)
         {
             Debug.Log("no mesh set, new one will be created");
             mesh = CreateMesh();
@@ -91,6 +92,7 @@ public class PlanetGenerator : MonoBehaviour
             Debug.Log("load precalculated mesh-data");
             mesh = sphereMeshes[details - 1];
         }
+
         this.GetComponent<MeshFilter>().sharedMesh = mesh;
         ocean.GetComponent<MeshFilter>().sharedMesh = mesh;
     }
@@ -124,12 +126,13 @@ public class PlanetGenerator : MonoBehaviour
                 featureBounds.w = b.w;
             }
         }
-        this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_spherical",0);
-        this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showData",0);
+
+        this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_spherical", 0);
+        this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showData", 0);
         sphere = false;
         featureMask = this.GetComponent<ComputeShaderTest>().getFeatureMask(featureIndex);
-        this.GetComponent<MeshRenderer>().sharedMaterial.SetTexture("_featureMask",featureMask);
-        this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_useFeatureMask",1);
+        this.GetComponent<MeshRenderer>().sharedMaterial.SetTexture("_featureMask", featureMask);
+        this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_useFeatureMask", 1);
         Mesh mesh = CreateMesh();
         this.GetComponent<MeshFilter>().sharedMesh = mesh;
         ocean.GetComponent<MeshFilter>().sharedMesh = mesh;
@@ -137,40 +140,60 @@ public class PlanetGenerator : MonoBehaviour
 
     public void setMode(string mode)
     {
-     switch (mode)
+        switch (mode)
         {
             case "heigth":
             {
-                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDP",0);
-                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDPPC",0);
-                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showPopulation",0);
+                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDP", 0);
+                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDPPC", 0);
+                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showPopulation", 0);
+                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showCityEmission", 0);
+                sun.SetActive(true);
                 break;
             }
             case "gdp":
             {
-                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDP",1);
-                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDPPC",0);
-                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showPopulation",0);
+                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDP", 1);
+                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDPPC", 0);
+                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showPopulation", 0);
+                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showCityEmission", 0);
+                sun.SetActive(true);
                 break;
             }
             case "gdp per capita":
             {
-                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDP",0);
-                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDPPC",1);
-                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showPopulation",0);
+                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDP", 0);
+                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDPPC", 1);
+                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showPopulation", 0);
+                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showCityEmission", 0);
+                sun.SetActive(true);
                 break;
             }
             case "population":
             {
-                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDP",0);
-                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDPPC",0);
-                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showPopulation",1);
+                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDP", 0);
+                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDPPC", 0);
+                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showPopulation", 1);
+                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showCityEmission", 0);
+                sun.SetActive(true);
                 break;
-            }default:
+            }
+            case "night":
             {
-                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDP",0);
-                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDPPC",0);
-                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showPopulation",0);
+                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDP", 0);
+                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDPPC", 0);
+                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showPopulation", 0);
+                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showCityEmission", 1);
+                sun.SetActive(false);
+                break;
+            }
+            default:
+            {
+                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDP", 0);
+                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDPPC", 0);
+                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showPopulation", 0);
+                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showCityEmission", 0);
+                sun.SetActive(true);
                 break;
             }
         }
