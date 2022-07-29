@@ -13,6 +13,7 @@ public class FlyingRoutes : MonoBehaviour
     Dictionary<string, Airport> airportMap = new Dictionary<string, Airport>();
     private List<Flight> flights = new List<Flight>();
     CleanFlightData flightData;
+    public Transform airplaneHolder;
 
     public Airplane airplanePrefab;
 
@@ -116,7 +117,7 @@ public class FlyingRoutes : MonoBehaviour
     {
         int flightNumber = UnityEngine.Random.Range(0, flightData.flights.Length - 1);
         Flight flight = flightData.flights[flightNumber];
-        Airplane airplane = Instantiate(airplanePrefab, Vector3.zero, Quaternion.identity, this.transform);
+        Airplane airplane = Instantiate(airplanePrefab, Vector3.zero, Quaternion.identity, airplaneHolder);
         Vector3 start = transform.TransformPoint(getPointOnSphere(flight.startLocation.x, flight.startLocation.y));
         Vector3 destination = transform.TransformPoint(getPointOnSphere(flight.destinationLocation.x, flight.destinationLocation.y));
         //make sure no flight with the same start and destination gets called

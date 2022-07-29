@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEditor;
-using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.Experimental.GlobalIllumination;
 using UnityEngine.UIElements;
@@ -99,7 +98,7 @@ public class PlanetGenerator : MonoBehaviour
 
     public void ShowDetailView(int featureIndex)
     {
-        ui.SetCountryName(CheckInPolygon.geoData.featureCollection.Features.ToList()[featureIndex].Properties["name"]);
+        ui.SetCountryName(CheckInPolygon.geoData.featureCollection.Features.ToList()[featureIndex].Properties["NAME"]);
         featureBounds = CheckInPolygon.geoData.bounds[featureIndex][0];
 
         //calculate total bounds for features with multiple subfeatures
