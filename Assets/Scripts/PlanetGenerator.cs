@@ -45,7 +45,7 @@ public class PlanetGenerator : MonoBehaviour
         }
         else
         {
-            data = PlaneGenerator.getPlane(details * 5, featureBounds);
+            data = PlaneGenerator.getPlane(details, featureBounds);
         }
 
         mesh.vertices = data.getVerticeArray();

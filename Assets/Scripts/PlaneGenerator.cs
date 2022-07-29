@@ -9,7 +9,7 @@ public class PlaneGenerator : MonoBehaviour
     //create a basic plane
     public static MeshData getPlane(int details, Vector4 bounds)
     {
-        int resolutionX = details;
+       
         float xStart = bounds.x / 360 + .5f;
         float xEnd = bounds.y / 360 + .5f;
         float yStart = bounds.z / 180 + .5f;
@@ -17,7 +17,10 @@ public class PlaneGenerator : MonoBehaviour
 
 
         float ratio = (yEnd - yStart) / (xEnd - xStart);
-        int resolutionZ = (int)(details*ratio);
+        int resolutionX = (int)(details*200*(xEnd - xStart));
+        Debug.Log(xEnd - xStart);
+        Debug.Log(resolutionX);
+        int resolutionZ = (int)(resolutionX*ratio);
         MeshData data = new MeshData();
 
         Vector3[] vertices = new Vector3[(resolutionX + 1) * (resolutionZ + 1)];
