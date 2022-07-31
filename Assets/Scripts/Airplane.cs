@@ -21,8 +21,8 @@ public class Airplane : MonoBehaviour
         transform.LookAt(destination, transform.position.normalized);
         //set distance 
         distance = Vector3.Distance(start, destination);
+        this.height = calculateHeight(height,distance);
         pos = -distance / 2;
-        this.height = height;
         this.speed = speed*distance;
         startMesh.position = start;
         targetMesh.position = destination;
@@ -53,5 +53,16 @@ public class Airplane : MonoBehaviour
         //to simplify calculation: a = ((2x/distance))
         float a = (2 * position / distance);
         return (-a * a + 1) * height;
+    }
+
+    /**
+     * depending on the with of the parabola, the height has to be adjusted
+     */
+    private float calculateHeight(float height, float distance)
+    {
+        //height of part-circle from https://rechneronline.de/pi/kreissegment.php
+        float h = 1 - Mathf.Sqrt(4 - distance * distance)/2;
+        Debug.Log(distance+" " +h);
+        return h + height;
     }
 }
