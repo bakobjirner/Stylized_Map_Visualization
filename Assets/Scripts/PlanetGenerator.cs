@@ -18,6 +18,7 @@ public class PlanetGenerator : MonoBehaviour
     public Mesh[] sphereMeshes = new Mesh[8];
     public Mesh[] planeMeshes = new Mesh[8];
     public GameObject sun;
+    public float heightMultiplier = 0.05f;
 
     public UIController ui;
 
@@ -79,6 +80,7 @@ public class PlanetGenerator : MonoBehaviour
         Mesh mesh;
         ui.SetCountryName("World");
         this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_spherical", 1);
+        this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_heightMultiplier", heightMultiplier);
         sphere = true;
         this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_useFeatureMask", 0);
         if (sphereMeshes[details - 1] == null)
@@ -132,6 +134,7 @@ public class PlanetGenerator : MonoBehaviour
         featureMask = this.GetComponent<ComputeShaderTest>().getFeatureMask(featureIndex);
         this.GetComponent<MeshRenderer>().sharedMaterial.SetTexture("_featureMask", featureMask);
         this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_useFeatureMask", 1);
+        this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_heightMultiplier", heightMultiplier * 100/(featureBounds.y-featureBounds.x));
         Mesh mesh = CreateMesh();
         this.GetComponent<MeshFilter>().sharedMesh = mesh;
         ocean.GetComponent<MeshFilter>().sharedMesh = mesh;
