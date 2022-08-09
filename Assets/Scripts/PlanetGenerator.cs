@@ -141,11 +141,18 @@ public class PlanetGenerator : MonoBehaviour
         ocean.GetComponent<MeshFilter>().sharedMesh = oceanPlaneMesh;
     }
 
-    public void setMode(string mode)
+    /*
+     * Sets the display-mode
+     * 0 is standard
+     * 1 is night
+     * 2 is gdp
+     * 3 is population
+     */
+    public void setMode(int mode)
     {
         switch (mode)
         {
-            case "heigth":
+            case 0:
             {
                 this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDP", 0);
                 this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDPPC", 0);
@@ -154,16 +161,16 @@ public class PlanetGenerator : MonoBehaviour
                 sun.SetActive(true);
                 break;
             }
-            case "gdp":
+            case 1:
             {
-                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDP", 1);
+                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDP", 0);
                 this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDPPC", 0);
                 this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showPopulation", 0);
-                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showCityEmission", 0);
-                sun.SetActive(true);
+                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showCityEmission", 1);
+                sun.SetActive(false);
                 break;
             }
-            case "gdp per capita":
+            case 2:
             {
                 this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDP", 0);
                 this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDPPC", 1);
@@ -172,22 +179,13 @@ public class PlanetGenerator : MonoBehaviour
                 sun.SetActive(true);
                 break;
             }
-            case "population":
+            case 3:
             {
                 this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDP", 0);
                 this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDPPC", 0);
                 this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showPopulation", 1);
                 this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showCityEmission", 0);
                 sun.SetActive(true);
-                break;
-            }
-            case "night":
-            {
-                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDP", 0);
-                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDPPC", 0);
-                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showPopulation", 0);
-                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showCityEmission", 1);
-                sun.SetActive(false);
                 break;
             }
             default:

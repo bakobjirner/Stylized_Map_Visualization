@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,9 +8,15 @@ public class UIController : MonoBehaviour
 {
 
     public Button exitButton;
-    public Button modeButton;
     public Label countryLabel;
-    public DropdownField dropdownField;
+    public RadioButtonGroup radioButtonGroup;
+    public RadioButton rbStandard;
+    public RadioButton rbNight;
+    public RadioButton rbGDP;
+    public RadioButton rbPopulation;
+
+    private int mode;
+
 
     public PlanetGenerator planetGenerator;
 
@@ -20,28 +27,41 @@ public class UIController : MonoBehaviour
         VisualElement root = GetComponent<UIDocument>().rootVisualElement;
         exitButton = root.Q<Button>("exit");
         countryLabel = root.Q<Label>("country_name");
-        dropdownField = root.Q<DropdownField>("dropdown");
-        modeButton = root.Q<Button>("set_mode");
-        List<string> choices = new List<string>();
-        choices.Add("heigth");
-        choices.Add("gdp");
-        choices.Add("gdp per capita");
-        choices.Add("population");
-        choices.Add("night");
-        dropdownField.choices = choices;
+        radioButtonGroup = root.Q<RadioButtonGroup>("rb_group");
+        rbStandard = radioButtonGroup.Q<RadioButton>("rb_standard");
+        rbNight = radioButtonGroup.Q<RadioButton>("rb_night");
+        rbGDP = radioButtonGroup.Q<RadioButton>("rb_gdp");
+        rbPopulation = radioButtonGroup.Q<RadioButton>("rb_population");
         exitButton.clicked += Exit;
-        modeButton.clicked += SetMode;
+    }
+
+    private void Update()
+    {
+        int oldMode = mode;
+        if (rbStandard.value)
+        {
+            mode = 0;
+        }else if(rbNight.value)
+        {
+            mode = 1;
+        }else if(rbGDP.value)
+        {
+            mode = 2;
+        }else if(rbPopulation.value)
+        {
+            mode = 3;
+        }
+
+        if (mode != oldMode)
+        {
+            planetGenerator.setMode(mode);
+        }
     }
 
     void Exit()
     {
         Debug.Log("exit");
         Application.Quit();
-    }
-
-    void SetMode()
-    {
-        planetGenerator.setMode(dropdownField.value);
     }
 
     public void SetCountryName(string name)
