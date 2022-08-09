@@ -41,7 +41,7 @@ public class UIControllerSettings : MonoBehaviour
     private void Reset()
     {
         resolution = 7;
-        height = 0.1f;
+        height = 0.05f;
         sliderHeight.value = height;
         sliderResolution.value = resolution;
     }
