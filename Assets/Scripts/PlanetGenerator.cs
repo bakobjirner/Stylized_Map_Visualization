@@ -26,9 +26,18 @@ public class PlanetGenerator : MonoBehaviour
 
     public void Start()
     {
+        if (PlayerPrefs.GetInt("resolution") == 0)
+        {
+            PlayerPrefs.SetInt("resolution",7);
+            PlayerPrefs.SetInt("planeRate",5);
+            PlayerPrefs.SetFloat("height", .05f);
+        }
         Debug.Log("start Planet Generation: " + Time.realtimeSinceStartup);
         heightMultiplier = PlayerPrefs.GetFloat("height");
         details = PlayerPrefs.GetInt("resolution");
+        this.GetComponent<FlyingRoutes>().airPlaneRate = PlayerPrefs.GetInt("planeRate");
+       
+        
         ShowGlobalView();
         drawData();
     }
