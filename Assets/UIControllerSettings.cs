@@ -31,6 +31,9 @@ public class UIControllerSettings : MonoBehaviour
             Reset();
         }
 
+        sliderHeight.value = height;
+        sliderResolution.value = resolution;
+
         btReset.clicked += Reset;
         btExit.clicked += Exit;
     }

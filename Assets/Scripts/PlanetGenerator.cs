@@ -27,8 +27,9 @@ public class PlanetGenerator : MonoBehaviour
     public void Start()
     {
         Debug.Log("start Planet Generation: " + Time.realtimeSinceStartup);
+        heightMultiplier = PlayerPrefs.GetFloat("height");
+        details = PlayerPrefs.GetInt("resolution");
         ShowGlobalView();
-
         drawData();
     }
 
