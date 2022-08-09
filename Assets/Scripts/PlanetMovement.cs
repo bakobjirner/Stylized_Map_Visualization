@@ -9,7 +9,6 @@ public class PlanetMovement : MonoBehaviour
     public float speed = 1;
     public float scrollSpeed = 100;
     private bool global = true;
-    public GameObject airplaneHolder;
 
     public Transform cameraHolder;
 
@@ -50,7 +49,6 @@ public class PlanetMovement : MonoBehaviour
                         transform.rotation = Quaternion.identity;
                         this.GetComponent<PlanetGenerator>().ShowDetailView(featureIndex);
                         global = false;
-                        airplaneHolder.SetActive(false);
                     }
                 }
             }
@@ -64,7 +62,6 @@ public class PlanetMovement : MonoBehaviour
                 myCamera.transform.localPosition = new Vector3(0, 0, -2);
                 this.GetComponent<PlanetGenerator>().ShowGlobalView();
                 global = true;
-                airplaneHolder.SetActive(true);
             }
         }
     }

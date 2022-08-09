@@ -22,6 +22,7 @@ public class PlanetGenerator : MonoBehaviour
     public Mesh oceanSphereMesh;
     public Mesh oceanPlaneMesh;
     public UIController ui;
+    public GameObject airplaneHolder;
 
 
     public void Start()
@@ -88,6 +89,7 @@ public class PlanetGenerator : MonoBehaviour
 
     public void ShowGlobalView()
     {
+        airplaneHolder.SetActive(true);
         Mesh mesh;
         ui.SetCountryName("World");
         this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_spherical", 1);
@@ -111,6 +113,7 @@ public class PlanetGenerator : MonoBehaviour
 
     public void ShowDetailView(int featureIndex)
     {
+        airplaneHolder.SetActive(false);
         ui.SetCountryName(CheckInPolygon.geoData.featureCollection.Features.ToList()[featureIndex].Properties["NAME"]);
         featureBounds = CheckInPolygon.geoData.bounds[featureIndex][0];
 
@@ -169,6 +172,7 @@ public class PlanetGenerator : MonoBehaviour
                 this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showPopulation", 0);
                 this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showCityEmission", 0);
                 sun.SetActive(true);
+                airplaneHolder.SetActive(true);
                 break;
             }
             case 1:
@@ -178,6 +182,7 @@ public class PlanetGenerator : MonoBehaviour
                 this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showPopulation", 0);
                 this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showCityEmission", 1);
                 sun.SetActive(false);
+                airplaneHolder.SetActive(false);
                 break;
             }
             case 2:
@@ -187,6 +192,7 @@ public class PlanetGenerator : MonoBehaviour
                 this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showPopulation", 0);
                 this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showCityEmission", 0);
                 sun.SetActive(true);
+                airplaneHolder.SetActive(false);
                 break;
             }
             case 3:
@@ -195,6 +201,7 @@ public class PlanetGenerator : MonoBehaviour
                 this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDPPC", 0);
                 this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showPopulation", 1);
                 this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showCityEmission", 0);
+                airplaneHolder.SetActive(false);
                 sun.SetActive(true);
                 break;
             }
@@ -204,6 +211,7 @@ public class PlanetGenerator : MonoBehaviour
                 this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDPPC", 0);
                 this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showPopulation", 0);
                 this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showCityEmission", 0);
+                airplaneHolder.SetActive(true);
                 sun.SetActive(true);
                 break;
             }
