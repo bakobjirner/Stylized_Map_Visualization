@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
 public class UIController : MonoBehaviour
@@ -60,8 +61,7 @@ public class UIController : MonoBehaviour
 
     void Exit()
     {
-        Debug.Log("exit");
-        Application.Quit();
+        SceneManager.LoadScene(0);
     }
 
     public void SetCountryName(string name)
