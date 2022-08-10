@@ -47,6 +47,11 @@ public class Airplane : MonoBehaviour
         //stretch in y dir by desired height y = (-((2x/distance))^2+1)*height
         //to simplify calculation: a = ((2x/distance))
         float a = (2 * position / distance);
+        if (float.IsInfinity(a))
+        {
+            return height;
+        }
+        
         return (-a * a + 1) * height;
     }
 
