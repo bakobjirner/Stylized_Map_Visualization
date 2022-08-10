@@ -27,6 +27,11 @@ public class PlanetGenerator : MonoBehaviour
 
     public void Start()
     {
+       init();
+    }
+
+    private void init()
+    {
         if (PlayerPrefs.GetInt("resolution") == 0)
         {
             PlayerPrefs.SetInt("resolution",7);
