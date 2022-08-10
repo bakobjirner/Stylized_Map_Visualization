@@ -4,7 +4,7 @@
         <ui:VisualElement style="width: 50%; justify-content: space-around; height: 30%;">
             <ui:SliderInt picking-mode="Ignore" label="RESOLUTION" value="7" high-value="8" name="resolution_slider" low-value="5" style="color: rgb(255, 255, 255); -unity-font-style: bold;" />
             <ui:Slider picking-mode="Ignore" label="HEIGHT MULTIPLIER" value="0.1" high-value="0.2" name="height_slider" usage-hints="None" style="color: rgb(255, 255, 255); -unity-font-style: bold;" />
-            <ui:SliderInt picking-mode="Ignore" label="AIRPLANE RATE" value="5" high-value="50" name="plane_slider" low-value="0" style="color: rgb(255, 255, 255); -unity-font-style: bold;" />
+            <ui:SliderInt picking-mode="Ignore" label="AIRPLANE RATE" value="5" high-value="10" name="plane_slider" low-value="0" style="color: rgb(255, 255, 255); -unity-font-style: bold;" />
             <ui:VisualElement style="flex-direction: row; justify-content: space-between; height: 30%;">
                 <ui:Button text="RESET" display-tooltip-when-elided="true" name="reset_button" style="width: 40%; background-color: rgb(255, 255, 255); -unity-font-style: bold; text-shadow: 0 0 0 rgb(100, 100, 100); color: rgb(100, 100, 100); height: 100%;" />
                 <ui:Button text="SAVE &amp; EXIT" display-tooltip-when-elided="true" name="exit_button" style="width: 40%; background-color: rgb(255, 255, 255); -unity-font-style: bold; color: rgb(100, 100, 100); height: 100%;" />

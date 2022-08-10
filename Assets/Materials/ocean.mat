@@ -135,8 +135,12 @@ Material:
     - _ZWrite: 1
     - _height: 0.004
     - _scale: 500
+    - _showWaves: 0
     - _speed: 0.001
     - _strength: 0.003
+    - _waveHeight: 0.01
+    - _waveZoom: 10000
+    - _wavespeed: 0.00005
     - _zoom: 500
     m_Colors:
     - Color_fafbe1117bfd45039081278fb3c16c77: {r: 0, g: 0.2601228, b: 1, a: 0}
