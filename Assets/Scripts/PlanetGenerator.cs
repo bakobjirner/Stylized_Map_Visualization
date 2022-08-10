@@ -96,7 +96,7 @@ public class PlanetGenerator : MonoBehaviour
     {
         airplaneHolder.SetActive(true);
         Mesh mesh;
-        ui.SetCountryName("World");
+        ui.SetCountryName("");
         this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_spherical", 1);
         this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_heightMultiplier", heightMultiplier);
         sphere = true;
