@@ -57,6 +57,15 @@ public class UIController : MonoBehaviour
         {
             planetGenerator.setMode(mode);
         }
+        //disable option to change mode in detail view
+        if (!planetGenerator.sphere && radioButtonGroup.visible)
+        {
+            radioButtonGroup.visible = false;
+        }else if (planetGenerator.sphere && !radioButtonGroup.visible)
+        {
+            radioButtonGroup.visible = true;
+            planetGenerator.setMode(mode);
+        }
     }
 
     void Exit()

@@ -18,6 +18,7 @@ public class PlanetGenerator : MonoBehaviour
     public Mesh[] sphereMeshes = new Mesh[8];
     public Mesh[] planeMeshes = new Mesh[8];
     public GameObject sun;
+    public GameObject sunDetail;
     public float heightMultiplier = 0.05f;
     public Mesh oceanSphereMesh;
     public Mesh oceanPlaneMesh;
@@ -94,6 +95,8 @@ public class PlanetGenerator : MonoBehaviour
 
     public void ShowGlobalView()
     {
+        sunDetail.SetActive(false);
+        sun.SetActive(true);
         airplaneHolder.SetActive(true);
         Mesh mesh;
         ui.SetCountryName("");
@@ -118,6 +121,12 @@ public class PlanetGenerator : MonoBehaviour
 
     public void ShowDetailView(int featureIndex)
     {
+        //set to standard mode
+        setMode(0);
+        //set correct light
+        sun.SetActive(false);
+        sunDetail.SetActive(true);
+        //disable airplanes
         airplaneHolder.SetActive(false);
         ui.SetCountryName(CheckInPolygon.geoData.featureCollection.Features.ToList()[featureIndex].Properties["NAME"]);
         featureBounds = CheckInPolygon.geoData.bounds[featureIndex][0];
