@@ -117,6 +117,7 @@ public class PlanetGenerator : MonoBehaviour
 
         this.GetComponent<MeshFilter>().sharedMesh = mesh;
         ocean.GetComponent<MeshFilter>().sharedMesh = oceanSphereMesh;
+        ocean.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showWaves", 0);
     }
 
     public void ShowDetailView(int featureIndex)
@@ -166,6 +167,7 @@ public class PlanetGenerator : MonoBehaviour
         Mesh mesh = CreateMesh();
         this.GetComponent<MeshFilter>().sharedMesh = mesh;
         ocean.GetComponent<MeshFilter>().sharedMesh = oceanPlaneMesh;
+        ocean.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showWaves", 1);
     }
 
     /*
