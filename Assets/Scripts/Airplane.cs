@@ -10,9 +10,6 @@ public class Airplane : MonoBehaviour
     public Transform plane;
     private float distance;
     public float speed = .1f;
-    public Transform startMesh;
-    public Transform targetMesh;
-
     public void Init(Vector3 start, Vector3 destination, float height , float speed)
     {
         //set middle of parabola between start and destination
@@ -24,8 +21,6 @@ public class Airplane : MonoBehaviour
         this.height = calculateHeight(height,distance);
         pos = -distance / 2;
         this.speed = speed*distance;
-        startMesh.position = start;
-        targetMesh.position = destination;
     }
 
     // Update is called once per frame
