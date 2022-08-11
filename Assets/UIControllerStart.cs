@@ -11,6 +11,7 @@ public class UIControllerStart : MonoBehaviour
     public Button btStart;
     public Button btExit;
     public Button btSettings;
+    public Label loadingIndicator;
     
     // Start is called before the first frame update
     void Start()
@@ -19,6 +20,7 @@ public class UIControllerStart : MonoBehaviour
         btStart = root.Q<Button>("start_button");
         btExit = root.Q<Button>("exit_button");
         btSettings = root.Q<Button>("settings_button");
+        loadingIndicator = root.Q<Label>("loading_indicator");
         btExit.clicked += Exit;
         btStart.clicked += StartGame;
         btSettings.clicked += OpenSettings;
@@ -32,6 +34,10 @@ public class UIControllerStart : MonoBehaviour
 
     private void StartGame()
     {
+        btStart.style.display = DisplayStyle.None;
+        btExit.style.display = DisplayStyle.None;
+        btSettings.style.display = DisplayStyle.None;
+        loadingIndicator.style.display = DisplayStyle.Flex;
         SceneManager.LoadScene(1);
     }
 
