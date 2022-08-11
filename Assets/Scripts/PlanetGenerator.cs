@@ -24,6 +24,7 @@ public class PlanetGenerator : MonoBehaviour
     public Mesh oceanPlaneMesh;
     public UIController ui;
     public GameObject airplaneHolder;
+    public int mode = 0;
 
 
     public void Start()
@@ -179,6 +180,7 @@ public class PlanetGenerator : MonoBehaviour
      */
     public void setMode(int mode)
     {
+        this.mode = mode;
         switch (mode)
         {
             case 0:
