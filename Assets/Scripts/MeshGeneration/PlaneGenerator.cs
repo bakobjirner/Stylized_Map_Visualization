@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-[RequireComponent(typeof(MeshFilter))]
-public class PlaneGenerator : MonoBehaviour
+/**
+ * holds functions to create plane-mesh
+ */
+public class PlaneGenerator
 {
     //create a basic plane
     public static MeshData getPlane(int details, Vector4 bounds)

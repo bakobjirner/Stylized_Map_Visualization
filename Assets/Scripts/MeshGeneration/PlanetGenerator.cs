@@ -7,8 +7,12 @@ using UnityEngine;
 using UnityEngine.Experimental.GlobalIllumination;
 using UnityEngine.UIElements;
 
+/*
+ * create the planet
+ */
 public class PlanetGenerator : MonoBehaviour
 {
+    //number of subdivisions of the icosphere
     [Range(1, 8)] public int details = 5;
 
     public bool sphere = true;

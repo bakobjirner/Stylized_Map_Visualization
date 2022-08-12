@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Xml.Serialization;
 using UnityEngine;
 
+/*
+ * holds mesh information 
+ */
 [XmlRoot]
 public class MeshData
 {
