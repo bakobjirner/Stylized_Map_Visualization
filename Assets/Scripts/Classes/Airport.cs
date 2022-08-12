@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 
+/**
+ * class to hold airport informaition deserialized from json
+ */
 [Serializable]
 public class Airport 
 {
