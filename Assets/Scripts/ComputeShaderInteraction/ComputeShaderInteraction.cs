@@ -5,38 +5,46 @@ using BAMCIS.GeoJSON;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ComputeShaderTest : MonoBehaviour
+public class ComputeShaderInteraction : MonoBehaviour
 {
+    //the computshader to calculate the textures
     public ComputeShader computeShader;
+    //json with country information
     public TextAsset geoJson;
+    //json with city information
     public TextAsset cityOutlineJson;
+    //resolution of data texture
     public int resolution = 16;
+    //maximum gdp. needed to calculate colors correctly
     private float maxGDP = 21000000;
+    //maximum population. needed to calculate colors correctly
     private float maxPop = 1400000000;
+    //citytexture if it has been cached
     public Texture cachedCityTexture;
-    [Range(0, 10)] public float lineThickness = 1;
-
-    public RenderTexture[] generateByPolygons()
+    public RenderTexture[] GenerateByPolygons()
     {
-        RenderTexture[] textures;
         Debug.Log("start Shader setup: " + Time.realtimeSinceStartup);
+        //textures to write data to
+        RenderTexture[] textures;
         RenderTexture colorTexture = new RenderTexture(resolution, resolution, 0);
         RenderTexture oceanTexture = new RenderTexture(resolution, resolution, 0);
         RenderTexture gdpTexture = new RenderTexture(resolution, resolution, 0);
         RenderTexture gdppcTexture = new RenderTexture(resolution, resolution, 0);
         RenderTexture populationTexture = new RenderTexture(resolution, resolution, 0);
+        //enable read write in textures
         oceanTexture.enableRandomWrite = true;
         gdpTexture.enableRandomWrite = true;
         gdppcTexture.enableRandomWrite = true;
         populationTexture.enableRandomWrite = true;
         colorTexture.enableRandomWrite = true;
+        //read json
         GeoData geoData = JsonReader.readGeoJson(geoJson);
         List<Vector4> colors = new List<Vector4>();
         List<List<Vector4>> bounds = new List<List<Vector4>>();
         List<List<List<Vector2>>> coordinates = new List<List<List<Vector2>>>();
-        Debug.Log("start calculating minMax: " + Time.realtimeSinceStartup);
         List<Feature> features = geoData.featureCollection.Features.ToList();
         List<List<Polygon>> allPolygons = new List<List<Polygon>>();
+        //add all polygons to draw to list
         for (int i = 0; i < features.Count; i++)
         {
             int a = (int)features[i].Properties["MAPCOLOR7"];
@@ -55,12 +63,7 @@ public class ComputeShaderTest : MonoBehaviour
 
             allPolygons.Add(polygons);
         }
-
-        //featureCollection.bounds = bounds;
-        //featureCollection.colors = colors;
-        //featureCollection.coordinates = coordinates;
-        Debug.Log("end Shader setup: " + Time.realtimeSinceStartup);
-
+        Debug.Log("start shader calculations: " + Time.realtimeSinceStartup);
         for (int i = 0; i < allPolygons.Count; i++)
         {
             bounds.Add(new List<Vector4>());
@@ -120,18 +123,20 @@ public class ComputeShaderTest : MonoBehaviour
 
                 Vector4 myBounds = new Vector4(xMin, xMax, yMin, yMax);
                 bounds[i].Add(myBounds);
-                colorTexture = addPolygonToTexture(pData, colorTexture, myBounds, colors[i],resolution);
-                oceanTexture = addPolygonToTexture(pData, oceanTexture, myBounds, Vector4.one,resolution);
-                gdpTexture = addPolygonToTexture(pData, gdpTexture, myBounds, colorGDP,resolution);
-                gdppcTexture = addPolygonToTexture(pData, gdppcTexture, myBounds, colorGDPPC,resolution);
-                populationTexture = addPolygonToTexture(pData, populationTexture, myBounds, colorPop,resolution);
+                //write the polygon to the texture
+                colorTexture = AddPolygonToTexture(pData, colorTexture, myBounds, colors[i],resolution);
+                oceanTexture = AddPolygonToTexture(pData, oceanTexture, myBounds, Vector4.one,resolution);
+                gdpTexture = AddPolygonToTexture(pData, gdpTexture, myBounds, colorGDP,resolution);
+                gdppcTexture = AddPolygonToTexture(pData, gdppcTexture, myBounds, colorGDPPC,resolution);
+                populationTexture = AddPolygonToTexture(pData, populationTexture, myBounds, colorPop,resolution);
             }
         }
-
+        //texture to write city data to
         RenderTexture cityTexture;
+        //check if there is stored data
         if (cachedCityTexture == null)
         {
-            cityTexture = getCityOutlineTexture();
+            cityTexture = GetCityOutlineTexture();
         }
         else
         {
@@ -141,6 +146,7 @@ public class ComputeShaderTest : MonoBehaviour
             cityTexture = renderTexture;
         }
         Debug.Log("end Shader calculations: " + Time.realtimeSinceStartup);
+        //store calculated bounds and geometry for later use
         geoData.bounds = bounds;
         geoData.coordinates = coordinates;
         CheckInPolygon.geoData = geoData;
@@ -148,14 +154,17 @@ public class ComputeShaderTest : MonoBehaviour
         return textures;
     }
 
-    private RenderTexture addPolygonToTexture(Vector2[] polygonData, RenderTexture texture, Vector4 bounds,
+    /**
+     * this function writes a given polygon to texture. the bounds speed up calculation
+     */
+    private RenderTexture AddPolygonToTexture(Vector2[] polygonData, RenderTexture texture, Vector4 bounds,
         Vector4 color, float resolution)
     {
+        //setup computebuffer
         ComputeBuffer computeBuffer = new ComputeBuffer(polygonData.Length, sizeof(float) * 2);
         computeBuffer.SetData(polygonData);
         computeShader.SetTexture(0, "Result", texture);
         computeShader.SetFloat("Resolution", resolution);
-        computeShader.SetFloat("Thickness", lineThickness);
         computeShader.SetVector("Bounds", bounds);
         computeShader.SetVector("Color", color);
         computeShader.SetFloat("NumberOfPoints", polygonData.Length);
@@ -165,7 +174,10 @@ public class ComputeShaderTest : MonoBehaviour
         return texture;
     }
 
-    public RenderTexture getFeatureMask(int featureIndex)
+    /**
+     * calculate a mask that only shows a given feature, e.g. a country on a worldmap
+     */
+    public RenderTexture GetFeatureMask(int featureIndex)
     {
         RenderTexture renderTexture = new RenderTexture(resolution, resolution, 0);
         renderTexture.enableRandomWrite = true;
@@ -184,14 +196,17 @@ public class ComputeShaderTest : MonoBehaviour
 
         for (int j = 0; j < polygons.Count; j++)
         {
-            renderTexture = addPolygonToTexture(CheckInPolygon.geoData.coordinates[featureIndex][j].ToArray(),
+            renderTexture = AddPolygonToTexture(CheckInPolygon.geoData.coordinates[featureIndex][j].ToArray(),
                 renderTexture, CheckInPolygon.geoData.bounds[featureIndex][j], Color.white,resolution);
         }
 
         return renderTexture;
     }
-
-    private RenderTexture getCityOutlineTexture()
+    
+    /*
+     * calculates the citytexture
+     */
+    private RenderTexture GetCityOutlineTexture()
     {
         int resolution = this.resolution * 4;
         FeatureCollection cityData = FeatureCollection.FromJson(cityOutlineJson.text);
@@ -234,7 +249,7 @@ public class ComputeShaderTest : MonoBehaviour
             }
 
             Vector4 myBounds = new Vector4(xMin, xMax, yMin, yMax);
-            cityTexture = addPolygonToTexture(pData, cityTexture, myBounds, Vector4.one,resolution);
+            cityTexture = AddPolygonToTexture(pData, cityTexture, myBounds, Vector4.one,resolution);
         }
         // storage of texture based on: https://answers.unity.com/questions/37134/is-it-possible-to-save-rendertextures-into-png-fil.html
         Texture2D tex = new Texture2D(resolution, resolution, TextureFormat.RGB24, false);

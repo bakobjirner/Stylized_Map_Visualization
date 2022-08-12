@@ -83,8 +83,8 @@ public class PlanetGenerator : MonoBehaviour
 
     private void drawData()
     {
-        ComputeShaderTest computeShaderTest = this.GetComponent<ComputeShaderTest>();
-        RenderTexture[] textures = computeShaderTest.generateByPolygons();
+        ComputeShaderInteraction computeShaderInteraction = this.GetComponent<ComputeShaderInteraction>();
+        RenderTexture[] textures = computeShaderInteraction.GenerateByPolygons();
 
         this.GetComponent<MeshRenderer>().sharedMaterial.SetTexture("_dataTexture", textures[0]);
         this.GetComponent<MeshRenderer>().sharedMaterial.SetTexture("_oceanTexture", textures[1]);
@@ -161,7 +161,7 @@ public class PlanetGenerator : MonoBehaviour
         this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_spherical", 0);
         this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showData", 0);
         sphere = false;
-        featureMask = this.GetComponent<ComputeShaderTest>().getFeatureMask(featureIndex);
+        featureMask = this.GetComponent<ComputeShaderInteraction>().GetFeatureMask(featureIndex);
         this.GetComponent<MeshRenderer>().sharedMaterial.SetTexture("_featureMask", featureMask);
         this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_useFeatureMask", 1);
         this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_heightMultiplier", heightMultiplier * 100/(featureBounds.y-featureBounds.x));
