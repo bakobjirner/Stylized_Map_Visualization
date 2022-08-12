@@ -180,55 +180,72 @@ public class PlanetGenerator : MonoBehaviour
      */
     public void setMode(int mode)
     {
+        MeshRenderer meshRenderer = this.GetComponent<MeshRenderer>();
         this.mode = mode;
         switch (mode)
         {
             case 0:
             {
-                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDP", 0);
-                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDPPC", 0);
-                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showPopulation", 0);
-                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showCityEmission", 0);
+                meshRenderer.sharedMaterial.SetFloat("_showGDP", 0);
+                meshRenderer.sharedMaterial.SetFloat("_showGDPPC", 0);
+                meshRenderer.sharedMaterial.SetFloat("_showPopulation", 0);
+                meshRenderer.sharedMaterial.SetFloat("_showCityEmission", 0);
+                meshRenderer.sharedMaterial.SetFloat("_showBorders", 0);
                 sun.SetActive(true);
                 airplaneHolder.SetActive(true);
                 break;
             }
             case 1:
             {
-                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDP", 0);
-                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDPPC", 0);
-                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showPopulation", 0);
-                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showCityEmission", 1);
+                meshRenderer.sharedMaterial.SetFloat("_showGDP", 0);
+                meshRenderer.sharedMaterial.SetFloat("_showGDPPC", 0);
+                meshRenderer.sharedMaterial.SetFloat("_showPopulation", 0);
+                meshRenderer.sharedMaterial.SetFloat("_showCityEmission", 1);
+                meshRenderer.sharedMaterial.SetFloat("_showBorders", 0);
                 sun.SetActive(false);
                 airplaneHolder.SetActive(false);
                 break;
             }
             case 2:
             {
-                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDP", 0);
-                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDPPC", 1);
-                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showPopulation", 0);
-                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showCityEmission", 0);
+                meshRenderer.sharedMaterial.SetFloat("_showGDP", 0);
+                meshRenderer.sharedMaterial.SetFloat("_showGDPPC", 1);
+                meshRenderer.sharedMaterial.SetFloat("_showPopulation", 0);
+                meshRenderer.sharedMaterial.SetFloat("_showCityEmission", 0);
+                meshRenderer.sharedMaterial.SetFloat("_showBorders", 0);
                 sun.SetActive(true);
                 airplaneHolder.SetActive(false);
                 break;
             }
             case 3:
             {
-                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDP", 0);
-                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDPPC", 0);
-                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showPopulation", 1);
-                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showCityEmission", 0);
+                meshRenderer.sharedMaterial.SetFloat("_showGDP", 0);
+                meshRenderer.sharedMaterial.SetFloat("_showGDPPC", 0);
+                meshRenderer.sharedMaterial.SetFloat("_showPopulation", 1);
+                meshRenderer.sharedMaterial.SetFloat("_showCityEmission", 0);
+                meshRenderer.sharedMaterial.SetFloat("_showBorders", 0);
+                airplaneHolder.SetActive(false);
+                sun.SetActive(true);
+                break;
+            }
+            case 4:
+            {
+                meshRenderer.sharedMaterial.SetFloat("_showGDP", 0);
+                meshRenderer.sharedMaterial.SetFloat("_showGDPPC", 0);
+                meshRenderer.sharedMaterial.SetFloat("_showPopulation", 0);
+                meshRenderer.sharedMaterial.SetFloat("_showCityEmission", 0);
+                meshRenderer.sharedMaterial.SetFloat("_showBorders", 1);
                 airplaneHolder.SetActive(false);
                 sun.SetActive(true);
                 break;
             }
             default:
             {
-                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDP", 0);
-                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showGDPPC", 0);
-                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showPopulation", 0);
-                this.GetComponent<MeshRenderer>().sharedMaterial.SetFloat("_showCityEmission", 0);
+                meshRenderer.sharedMaterial.SetFloat("_showGDP", 0);
+                meshRenderer.sharedMaterial.SetFloat("_showGDPPC", 0);
+                meshRenderer.sharedMaterial.SetFloat("_showPopulation", 0);
+                meshRenderer.sharedMaterial.SetFloat("_showCityEmission", 0);
+                meshRenderer.sharedMaterial.SetFloat("_showBorders", 0);
                 airplaneHolder.SetActive(true);
                 sun.SetActive(true);
                 break;

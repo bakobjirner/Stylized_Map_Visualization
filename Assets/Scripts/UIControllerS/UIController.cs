@@ -15,6 +15,7 @@ public class UIController : MonoBehaviour
     public RadioButton rbNight;
     public RadioButton rbGDP;
     public RadioButton rbPopulation;
+    public RadioButton rbCountries;
 
     private int mode;
 
@@ -33,6 +34,7 @@ public class UIController : MonoBehaviour
         rbNight = radioButtonGroup.Q<RadioButton>("rb_night");
         rbGDP = radioButtonGroup.Q<RadioButton>("rb_gdp");
         rbPopulation = radioButtonGroup.Q<RadioButton>("rb_population");
+        rbCountries = radioButtonGroup.Q<RadioButton>("rb_countries");
         exitButton.clicked += Exit;
     }
 
@@ -51,6 +53,10 @@ public class UIController : MonoBehaviour
         }else if(rbPopulation.value)
         {
             mode = 3;
+        }
+        else if(rbCountries.value)
+        {
+            mode = 4;
         }
 
         if (mode != oldMode)

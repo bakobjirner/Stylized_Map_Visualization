@@ -10,5 +10,6 @@
         <ui:RadioButton label="Night" name="rb_night" focusable="false" />
         <ui:RadioButton label="GDP per capita" name="rb_gdp" focusable="false" />
         <ui:RadioButton label="Population" name="rb_population" focusable="false" />
+        <ui:RadioButton label="Countries" name="rb_countries" focusable="false" />
     </ui:RadioButtonGroup>
 </ui:UXML>
