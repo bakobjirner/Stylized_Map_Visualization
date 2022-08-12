@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/**
+ * class to hold triangle information for mesh generation
+ */
 public class Triangle
 {
     public int v1;

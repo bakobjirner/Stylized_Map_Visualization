@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 
+/**
+ * class to hold route information deserialized from json
+ */
 [Serializable]
 public class Route
 {

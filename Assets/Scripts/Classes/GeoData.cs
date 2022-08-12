@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using BAMCIS.GeoJSON;
 using UnityEngine;
 
+/**
+ * class to hold geo-data
+ */
 public class GeoData
 {
     public  FeatureCollection featureCollection;

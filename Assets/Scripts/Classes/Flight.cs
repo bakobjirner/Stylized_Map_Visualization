@@ -1,6 +1,9 @@
 using System;
 using UnityEngine;
 
+/**
+ * class to hold flight informaition deserialized from json
+ */
 [Serializable]
 public class Flight
 {
