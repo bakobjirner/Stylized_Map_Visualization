@@ -11,10 +11,52 @@ public class SphereGenerator
 {
     public static Dictionary<long, int> middlePointIndexCache;
 
-    public static MeshData GetSphere(int subdivisions)
+    public static MeshData GetSphere(int subdivisions, bool useStorage)
     {
+        if (useStorage)
+        {
+            return ReadFile(subdivisions);
+        }
+        else
+        {
             return CreateIco(subdivisions);
+        }
     }
+
+    public static void WriteFile(MeshData data, int subdivisions)
+    {
+        string path = "Assets/Resources/meshData/meshJSon" + subdivisions + ".txt";
+        StreamWriter writer = new StreamWriter(path, false);
+        string text = JsonConvert.SerializeObject(data);
+        writer.Write(text);
+        writer.Close();
+    }
+
+    public static MeshData ReadFile(int subdivisions)
+    {
+        MeshData data;
+        string path = "Assets/Resources/meshData/meshJSon" + subdivisions + ".txt";
+
+        try
+        {
+            Debug.Log("start reading file: " + Time.realtimeSinceStartup);
+            //AssetDatabase.ImportAsset(path);
+            TextAsset asset = (TextAsset)Resources.Load("meshData/meshJSon" + subdivisions);
+            data = JsonConvert.DeserializeObject<MeshData>(asset.text);
+            Debug.Log("end reading file: " + Time.realtimeSinceStartup);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("reading file not possible: " + e.Message);
+            data = CreateIco(subdivisions);
+            Debug.Log("start writing file: " + Time.realtimeSinceStartup);
+            WriteFile(data, subdivisions);
+            Debug.Log("end writing file: " + Time.realtimeSinceStartup);
+        }
+
+        return data;
+    }
+
 
     private static MeshData CreateIco(int subdivisions)
     {
