@@ -45,7 +45,7 @@ public class UIControllerSettings : MonoBehaviour
 
     private void Reset()
     {
-        resolution = 5;
+        resolution = 7;
         height = 0.05f;
         planeRate = 5;
         sliderPlanes.value = planeRate;
